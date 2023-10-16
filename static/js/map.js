@@ -97,6 +97,7 @@ function createMap(fromSearch = false, searchData=null) {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         mapTypeControl: false
     });
+    map.markers = []; // Add new attribute, so we can keep track of the map's markers
 
   // Icon for miklats
     const svgMarker = {
@@ -121,7 +122,11 @@ function createMap(fromSearch = false, searchData=null) {
       }
 
       marker = new google.maps.Marker({position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map, icon: icon});
+      map.markers.push(marker);
     }
+
+    // Create button to move to user's current location
+    createPanButton(map);
 
     /*
      * Populate addresses
@@ -145,4 +150,61 @@ function createMap(fromSearch = false, searchData=null) {
         const addressCell = row.insertCell(1);
         addressCell.innerHTML = locations[i][2];
     }
+}
+
+// Location functions
+function getLocationErrorMessage(code) {
+  switch (code) {
+    case 1:
+      return "Permission denied (make sure that Miklat Finder has access to your phone's location)";
+    case 2:
+      return "Position unavailable (make sure that location is enabled on your phone)";
+    case 3:
+      return "Timeout reached (refreshing the page may help)";
+  }
+}
+
+// HTML5 geolocation
+const getCurrentLocation3 = () => new Promise((resolve) => {
+    var location = {lat: 69420, lng: 69420}
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                location = {lat: position.coords.latitude, lng: position.coords.longitude};
+                resolve(location); // important; this has to be *inside* this callback
+            },
+            (err) => {
+                alert(`Error (${err.code}): ${getLocationErrorMessage(err.code)}`);
+                resolve(location);
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by your browser");
+        resolve(location);
+    }
+});
+
+// Moves to user's location when clicked
+function createPanButton(map) {
+    const locationButton = document.createElement("button");
+
+    locationButton.textContent = "Pan to Current Location";
+    locationButton.classList.add("custom-map-control-button");
+    locationButton.style.backgroundColor = "#90ee90";
+    locationButton.style.fontWeight = "bold";
+
+    // Add button to map
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+
+    // Set click event
+    locationButton.addEventListener("click", async () => {
+        const location = await getCurrentLocation3();
+        const unkLocation = {lat: 69420, lng: 69420};
+
+        if (location["lat"]!==unkLocation["lat"] && location["lng"]!==unkLocation["lng"]) {
+            map.markers[0].setPosition(location); // Move the marker representing the user's last location to the current position
+            map.panTo(location);
+        }
+    });
 }
