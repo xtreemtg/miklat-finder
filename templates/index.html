@@ -18,10 +18,13 @@
 </head>
 <body onload="createPlacesAutcomplete()">
     <div>
-        <div>
+        <div style="display: flex;">
             <button class="find" onclick="createMap();">Find nearest miklat</button>
             OR by address:
-            <input id="addressbar" type="text" size="50" placeholder="Input address"></input>
+            <div>
+                <input id="addressbar" type="text" size="50" style="display: block;" placeholder="Input address"></input>
+                <span id="address-error" style="position: relative;color: #FF0000;display: none;">Could not find location specified</span>
+            </div>
         </div>
         <table border="1" id="addresses" style="display: none;">
             <tr>
