@@ -13,12 +13,28 @@ function createPlacesAutcomplete() {
 
     // Update map when address is selected
     autocomplete.addListener("place_changed", (data) => {
-        const placeData = autocomplete.getPlace();
-        const lat = placeData["geometry"]["location"].lat();
-        const lng = placeData["geometry"]["location"].lng();
-        const address = addressComponentsToFull(placeData["address_components"]); //placeData["address_components"].map(addr => addr["long_name"]).join(", ");
+        var badData = true;
+        var lat, lng, address;
 
-        createMap(true, [lat, lng, address]);
+        try {
+            const placeData = autocomplete.getPlace();
+
+            lat = placeData["geometry"]["location"].lat();
+            lng = placeData["geometry"]["location"].lng();
+            address = addressComponentsToFull(placeData["address_components"]);
+            badData = false;
+
+        } catch (error) {
+            console.log("Error getting location data from Autcomplete widget");
+            // Do not log actual error (or use console.error) for now, to prevent leaking the API key
+        }
+
+        const errMsg = document.getElementById("address-error");
+        if (!badData) {
+            createMap(true, [lat, lng, address]);
+            errMsg.style.display = "none";
+        } else
+            errMsg.style.display = "inline";
     });
 }
 
