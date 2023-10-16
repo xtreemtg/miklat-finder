@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>Miklat Finder</title>
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyBfF4P88BWO3BKU-3L8iII3YjMTzVX0sxg"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfF4P88BWO3BKU-3L8iII3YjMTzVX0sxg&libraries=places"></script>
     <script src="{{ url_for('static', filename='js/map.js') }}"></script>
 
     <style>
@@ -16,10 +16,12 @@
         }
     </style>
 </head>
-<body>
+<body onload="createPlacesAutcomplete()">
     <div>
         <div>
             <button class="find" onclick="createMap();">Find nearest miklat</button>
+            OR by address:
+            <input id="addressbar" type="text" size="50" placeholder="Input address"></input>
         </div>
         <table border="1" id="addresses" style="display: none;">
             <tr>
