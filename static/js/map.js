@@ -125,6 +125,16 @@ function createMap(fromSearch = false, searchData=null) {
       map.markers.push(marker);
     }
 
+    // Start tracking user's position
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((pos) => {
+            const latitude = pos.coords.latitude;
+            const longitude = pos.coords.longitude;
+            map.markers[0].setPosition({lat: latitude, lng: longitude});
+
+        }, (error) => {});
+    }
+
     // Create button to move to user's current location
     createPanButton(map);
 
