@@ -1,3 +1,46 @@
+// Places functions
+function createPlacesAutcomplete() {
+    // Create Autocomplete widget
+    const input = document.getElementById("addressbar");
+    const options = {
+        componentRestrictions: { country: "il" },
+        fields: ["address_components", "geometry", "icon", "name"],
+        strictBounds: true,
+    };
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    // Update map when address is selected
+    autocomplete.addListener("place_changed", (data) => {
+        const placeData = autocomplete.getPlace();
+        const lat = placeData["geometry"]["location"].lat();
+        const lng = placeData["geometry"]["location"].lng();
+        const address = addressComponentsToFull(placeData["address_components"]); //placeData["address_components"].map(addr => addr["long_name"]).join(", ");
+
+        createMap(true, [lat, lng, address]);
+    });
+}
+
+// Create address name (might be useless function)
+function addressComponentsToFull(address_components) {
+    const components = [];
+    const valid_types = [["route", 0], ["street_number", 1], ["locality", 2]];
+
+    for (var i = 0; i < address_components.length; i++) {
+        const types = address_components[i]["types"];
+
+        // Check that the component types are from what we want
+        if (types.some(r => valid_types.map(t => t[0]).includes(r))) {
+          const name = address_components[i]["long_name"];
+          const type_order = valid_types.filter(vt => vt[0]==types[0])[0][1];
+
+          components.push([name, type_order]);
+        }
+    }
+
+    return components.sort((a,b) => a[1]>b[1]).map(cmpo => cmpo[0]).join(" ");
+}
+
+
 // Map functions
 function getCurrentLocation() {
   return [32.079969, 34.848110, "empty address"]
@@ -21,8 +64,8 @@ function getSvgPath(number) {
     }
 }
 
-function createMap() {
-    var currentLocation = getCurrentLocation(); // First get the current location
+function createMap(fromSearch = false, searchData=null) {
+    var currentLocation = fromSearch ? searchData : getCurrentLocation(); // First get the current location
     var otherLocations = getNearestMiklats(currentLocation); // Then get nearest miklats based on it
 
     var locations = [[currentLocation[0], currentLocation[1]]];
