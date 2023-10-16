@@ -2,6 +2,8 @@
 function createPlacesAutcomplete() {
     // Create Autocomplete widget
     const input = document.getElementById("addressbar");
+    input.value = ""; // Clear text
+
     const options = {
         componentRestrictions: { country: "il" },
         fields: ["address_components", "geometry", "icon", "name"],
