@@ -1,3 +1,4 @@
+// Map functions
 function getCurrentLocation() {
   return [32.079969, 34.848110, "empty address"]
 }
@@ -63,6 +64,7 @@ function createMap() {
      * Populate addresses
      */
     const addressTable = document.getElementById("addresses");
+    addressTable.style.display = "inline";
 
     // Remove any existing rows
     for (var i = 1;i < addressTable.rows.length;){
@@ -72,7 +74,12 @@ function createMap() {
     // Populate
     for (var i = 1; i < locations.length; i++) {
         const row = addressTable.insertRow(i);
-        const cell = row.insertCell(0);
-        cell.innerHTML = locations[i][2];
+
+        const numCell = row.insertCell(0);
+        numCell.innerHTML = i;
+        numCell.style.textAlign = "center";
+
+        const addressCell = row.insertCell(1);
+        addressCell.innerHTML = locations[i][2];
     }
 }
