@@ -90,10 +90,12 @@ function createMap(fromSearch = false, searchData=null) {
     for (var i = 0; i < otherLocations.length; i++)
         locations.push(otherLocations[i]);
 
+    // Create map
     var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 17,
         center: new google.maps.LatLng(locations[0][0], locations[0][1]),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControl: false
     });
 
   // Icon for miklats
