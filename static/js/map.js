@@ -68,7 +68,7 @@ function createMap() {
 
     // Remove any existing rows
     for (var i = 1;i < addressTable.rows.length;){
-        table.deleteRow(i);
+        addressTable.deleteRow(i);
     }
 
     // Populate
