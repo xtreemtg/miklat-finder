@@ -17,13 +17,17 @@
     </style>
 </head>
 <body>
-
-    <button onclick="createMap();">Find nearest miklat</button>
+    <div>
+        <div>
+            <button class="find" onclick="createMap();">Find nearest miklat</button>
+        </div>
+        <table border="1" id="addresses" style="display: none;">
+            <tr>
+                <th>Number</th>
+                <th>Address</th>
+            </tr>
+        </table>
+    </div>
     <div id="map" style="width: 500px; height: 400px;"></div>
-    <table border="1" id='addresses'>
-      <tr>
-          <th>Name</th>
-      </tr>
-    </table>
 </body>
 </html>
