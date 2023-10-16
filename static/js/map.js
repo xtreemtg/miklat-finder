@@ -6,7 +6,7 @@ function createPlacesAutcomplete() {
 
     const options = {
         componentRestrictions: { country: "il" },
-        fields: ["address_components", "geometry", "icon", "name"],
+        fields: ["address_components", "geometry"],
         strictBounds: true,
     };
     const autocomplete = new google.maps.places.Autocomplete(input, options);
