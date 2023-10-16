@@ -31,7 +31,7 @@ def get_directions(start_coords, end_coords, auth):
 
 
 def sort_by_geo_distance(start_coords):
-    sorted_miklats = sorted([(m, distance.distance(start_coords, m["coordinates"]).meters) for m in MIKLATS], key=lambda m:m[1])
+    sorted_miklats = sorted([(m, round(distance.distance(start_coords, m["coordinates"]).meters)) for m in MIKLATS], key=lambda m:m[1])
     return sorted_miklats
 
 
@@ -47,6 +47,6 @@ def get_nearest_mamads(start_coords, auth, quick=False, num_results=3):
             results.append(future.result())
     new_results = []
     for m, res in zip(sorted_mamads, results):
-        dist = res["routes"][0]["summary"]["distance"]
+        dist = round(res["routes"][0]["summary"]["distance"])
         new_results.append((m[0], dist))
     return new_results
