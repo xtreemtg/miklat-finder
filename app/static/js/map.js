@@ -228,11 +228,19 @@ async function createMap(fromSearch = false, searchData=null) {
 
         const numCell = row.insertCell(0);
         numCell.innerHTML = i;
-        numCell.style.textAlign = "center";
 
-        const addressCell = row.insertCell(1);
-        addressCell.innerHTML = locations[i][2];
-        addressCell.style.textAlign = "center";
+        const nameCell = row.insertCell(1);
+        nameCell.innerHTML = locations[i][2];
+
+        const addressCell = row.insertCell(2);
+        addressCell.innerHTML = "--"; // Not ready yet
+
+        const distanceCell = row.insertCell(3);
+        distanceCell.innerHTML = locations[i][3];
+
+        // Align cells
+        for (var j = 0; j < row.cells.length; j++)
+            row.cells[j].style.textAlign = "center";
     }
 }
 
