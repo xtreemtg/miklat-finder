@@ -1,3 +1,11 @@
+// Custom errors
+class IllegalStateError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "IllegalStateError";
+    }
+}
+
 // Places functions
 function createPlacesAutcomplete() {
     // Create Autocomplete widget
