@@ -232,6 +232,7 @@ async function createMap(fromSearch = false, searchData=null) {
 
         const addressCell = row.insertCell(1);
         addressCell.innerHTML = locations[i][2];
+        addressCell.style.textAlign = "center";
     }
 }
 
