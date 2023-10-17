@@ -20,7 +20,7 @@ function createPlacesAutcomplete() {
     const autocomplete = new google.maps.places.Autocomplete(input, options);
 
     // Update map when address is selected
-    autocomplete.addListener("place_changed", (data) => {
+    autocomplete.addListener("place_changed", async (data) => {
         var badData = true;
         var lat, lng, address;
 
@@ -39,7 +39,7 @@ function createPlacesAutcomplete() {
 
         const errMsg = document.getElementById("address-error");
         if (!badData) {
-            createMap(true, [lat, lng, address]);
+            await createMap(true, [lat, lng, address]); // Note: address is not currently used, but may be used in the future, so it is left here
             errMsg.style.display = "none";
         } else
             errMsg.style.display = "inline";
@@ -153,9 +153,9 @@ function getSvgPath(number) {
     }
 }
 
-function createMap(fromSearch = false, searchData=null) {
-    var otherLocations = getNearestMiklats(currentLocation); // Then get nearest miklats based on it
+async function createMap(fromSearch = false, searchData=null) {
     var currentLocation = (fromSearch ? searchData : getCurrentLocation()).slice(0,2); // First get the current location
+    var otherLocations = await getNearestMiklats(currentLocation); // Then get nearest miklats based on it
 
     var locations = [[currentLocation[0], currentLocation[1]]];
     for (var i = 0; i < otherLocations.length; i++)
