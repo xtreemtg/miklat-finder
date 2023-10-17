@@ -340,12 +340,14 @@ function createPanButton(map) {
 
     // Set click event
     locationButton.addEventListener("click", async () => {
-        const location = await getCurrentLocation3();
-        const unkLocation = {lat: 69420, lng: 69420};
+        const location = await getCurrentLocation();
+        const unkLocation = [69420, 69420];
 
-        if (location["lat"]!==unkLocation["lat"] && location["lng"]!==unkLocation["lng"]) {
-            map.markers[0].setPosition(location); // Move the marker representing the user's last location to the current position
-            map.panTo(location);
+        if (location[0]!==unkLocation[0] && location[1]!==unkLocation[1]) {
+            const latlngLiteral = {lat: location[0], lng: location[1]};
+
+            map.markers[0].setPosition(latlngLiteral); // Move the marker representing the user's last location to the current position
+            map.panTo(latlngLiteral);
         }
     });
 }
