@@ -30,5 +30,69 @@
         </table>
     </div>
     <div id="map" style="width: 500px; height: 400px;"></div>
+    <div>
+        <h4>If you can't reach a mamad/miklat in time and are...</h4>
+        <ul class="wrapper">
+            <li>
+                <button class="collapsible building">
+                    <img src="images/building.png"></img>
+                    <span>Indoors</span>
+                </button>
+                <ul class="content">
+                    <li><b>Inner stairwell - </b>without windows, openings or external walls. Sit on the stairs and not in the floor space. In a building with more than three floors – stay in the staircase that has at least two floors above it. In a building with less than three floors – stay in the middle floor.</li>
+                    <li><b>Inner room - </b>with as few outside walls, windows and openings as possible. Sit in an inner corner under a window line and not In front of the door. Kitchens, bathrooms or toilets cannot be used as an inner room.</li>
+                </ul>
+            </li>
+            <li>
+                <button class="collapsible">
+                    <img src="images/tree.png"></img>
+                    <span>Outside</span>
+                </button>
+                <ul class="content">
+                    <li><b>In a built-up area - </b>enter a shelter or a stairwell of a nearby building. Stay away from the entrance area.</li>
+                    <li><b>In an open area - </b>lie on the ground and protect your head with your hands. When a rocket hits the ground, the explosion blast wave generates fragments that can injure anyone standing up or sitting down.</li>
+                </ul>
+            </li>
+            <li>
+                <button class="collapsible">
+                    <img src="images/car.png"></img>
+                    <span>In a vehicle</span>
+                </button>
+                <ul class="content">
+                    <li>Stop the vehicle on the side of the road, get out of the car and enter a shelter or a stairwell in a nearby building.</li>
+                    <li>If you cannot reach shelter within the time available to reach shelter – get out and move away from the vehicle to the side of the road or beyond the separation fence, lie on the ground and protect your head with your hands.</li>
+                    <li>Only if you are unable to get out of the vehicle, stop at the side of the road and bend below window line.</li>
+                </ul>
+            </li>
+            <li>
+                <button class="collapsible">
+                    <img src="images/bus.png"></img>
+                    <span>On public transportation</span>
+                </button>
+                <ul class="content">
+                    <li><b>On an intercity bus and student transportation - </b>the driver must stop the vehicle at the side of the road and open the doors, and the passengers must bend below the window line and protect their heads with their hands.</li>
+                    <li><b>On a city bus - </b>the driver must stop on the side of the road and open the doors for the passengers to get off and enter a nearby building. If it is not possible to reach the building in the time available, bend below the window line and protect your head with your hands.</li>
+                    <li><b>When traveling by train - </b>the driver must slow down to a speed of 30 km/h for 10 minutes, the passengers must bend below the window line in the carriages and protect their heads with their hands.</li>
+                </ul>
+            </li>
+        </ul>
+        <small>(instructions and icons taken from Pikud Haoref at https://www.oref.org.il/12761-en/pakar.aspx)</small>
+    </div>
 </body>
+<script>
+// Enable collapsing functionality
+var collapsibles = document.getElementsByClassName("collapsible");
+
+for (var i = 0; i < collapsibles.length; i++) {
+    collapsibles[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        const content = this.nextElementSibling;
+
+        if (content.style.maxHeight)
+            content.style.maxHeight = null;
+        else
+            content.style.maxHeight = content.scrollHeight + "px";
+    });
+}
+</script>
 </html>
