@@ -68,16 +68,32 @@ function addressComponentsToFull(address_components) {
 
 
 // Map functions
-function getCurrentLocation() {
-  return [32.079969, 34.848110, "empty address"]
-}
 
-function getNearestMiklats2(location) {
-    return [
-        [32.080479, 34.846880, "address 1"],
-        [32.079469, 34.847763, "address 2"]
-    ];
-}
+// HTML5 geolocation. Latitude is first element, longitude is 2nd element
+const getCurrentLocation = () => new Promise((resolve) => {
+    var location = [69420, 69420];
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                location = [position.coords.latitude, position.coords.longitude];
+                resolve(location); // important; this has to be *inside* this callback
+            },
+            (err) => {
+                alert(`Error (${err.code}): ${getLocationErrorMessage(err.code)}`);
+                resolve(location);
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: 30 * 1000, // 30s timeout
+                maximumAge: Infinity
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by your browser");
+        resolve(location);
+    }
+});
 
 const getNearestMiklats = (location) => new Promise((resolve) => {
     post_data = {"start_coords": location, "quick":true, "numResults": 4};
@@ -143,6 +159,18 @@ const getNearestMiklats = (location) => new Promise((resolve) => {
 
     xhr.send(JSON.stringify(post_data));
 });
+
+// Dummy data functions (for testing purposes only)
+function getCurrentLocation2() {
+  return [32.079969 + 0.001, 34.848110, "empty address"]
+}
+
+function getNearestMiklats2(location) {
+    return [
+        [32.080479, 34.846880, "address 1"],
+        [32.079469, 34.847763, "address 2"]
+    ];
+}
 
 // SVG icons that display a pin with 1, 2, or 3 (respectively)
 function getSvgPath(number) {
@@ -297,27 +325,6 @@ function getLocationErrorMessage(code) {
       return "Timeout reached (refreshing the page may help)";
   }
 }
-
-// HTML5 geolocation
-const getCurrentLocation3 = () => new Promise((resolve) => {
-    var location = {lat: 69420, lng: 69420}
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                location = {lat: position.coords.latitude, lng: position.coords.longitude};
-                resolve(location); // important; this has to be *inside* this callback
-            },
-            (err) => {
-                alert(`Error (${err.code}): ${getLocationErrorMessage(err.code)}`);
-                resolve(location);
-            }
-        );
-    } else {
-        alert("Geolocation is not supported by your browser");
-        resolve(location);
-    }
-});
 
 // Moves to user's location when clicked
 function createPanButton(map) {
