@@ -1,9 +1,7 @@
 import requests
 from geopy import distance
 from concurrent.futures import ThreadPoolExecutor
-import json
-
-MIKLATS = json.load(open("miklats.json"))
+from app.models import Miklat
 
 
 def get_directions(start_coords, end_coords, auth):
@@ -20,7 +18,9 @@ def get_directions(start_coords, end_coords, auth):
 
 
 def sort_by_geo_distance(start_coords):
-    sorted_miklats = sorted([(m, round(distance.distance(start_coords, m["coordinates"]).meters)) for m in MIKLATS], key=lambda m:m[1])
+    miklats = [m.__dict__ for m in Miklat.query.all()]
+    miklats = [{k: v for k, v in m.items() if k != "_sa_instance_state"} for m in miklats]
+    sorted_miklats = sorted([(m, round(distance.distance(start_coords, (m["lat"], m["long"])).meters)) for m in miklats], key=lambda m:m[1])
     return sorted_miklats
 
 
@@ -31,7 +31,7 @@ def get_nearest_mamads(start_coords, auth, quick=False, num_results=3):
         return sorted_mamads
     results = []
     with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(get_directions, start_coords, m[0]["coordinates"], auth) for m in sorted_mamads]
+        futures = [executor.submit(get_directions, start_coords, (m[0]["lat"], m[0]["long"]), auth) for m in sorted_mamads]
         for future in futures:
             results.append(future.result())
     new_results = []
