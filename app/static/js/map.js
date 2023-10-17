@@ -155,8 +155,11 @@ function getSvgPath(number) {
     }
 }
 
-async function createMap(fromSearch = false, searchData=null) {
-    var currentLocation = (fromSearch ? searchData : getCurrentLocation()).slice(0,2); // First get the current location
+// Creates the map with the 3 nearest miklats
+// fromSearch: if the location data comes from an address search
+// fromClick: if the location data comes from a click
+async function createMap(fromSearch = false, searchData=null, fromClick = false) {
+    var currentLocation = (fromSearch ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
     var otherLocations = await getNearestMiklats(currentLocation); // Then get nearest miklats based on it
 
     var locations = [[currentLocation[0], currentLocation[1]]];
@@ -176,7 +179,10 @@ async function createMap(fromSearch = false, searchData=null) {
     const svgMarker = {
       /*
        * old path code here. leave for when needing to make new SVG paths
-      path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",*/
+      path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+      */
+
+      defaultPath: "M 0 0 q 2.906 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z", // Default marker with nothing inside
       path: "",
       fillColor: "blue",
       fillOpacity: 0.6,
@@ -195,7 +201,7 @@ async function createMap(fromSearch = false, searchData=null) {
 
         // User's current location has default marker, miklats have custom marker
         if (i>0) {
-            svgMarker["path"] = getSvgPath(i);
+            svgMarker.path = getSvgPath(i);
             markerData.icon = svgMarker;
         }
 
@@ -204,6 +210,19 @@ async function createMap(fromSearch = false, searchData=null) {
 
         // Extend boundary
         bounds.extend(marker.position);
+    }
+
+    // Add marker where user clicked/selected address
+    if (fromSearch || fromClick) {
+        const markerData = {position: new google.maps.LatLng(locations[0][0], locations[0][1]), map: map};
+
+        svgMarker.path = svgMarker.defaultPath; // Use default marker
+        svgMarker.fillColor = "yellow";
+        svgMarker.fillOpacity = 1;
+        svgMarker.strokeWeight = 1;
+        markerData.icon = svgMarker;
+
+        const clickMarker = new google.maps.Marker(markerData);
     }
 
     // Fit map to boundary
