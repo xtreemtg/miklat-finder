@@ -158,7 +158,7 @@ async function createMap(fromSearch = false, searchData=null) {
     var otherLocations = await getNearestMiklats(currentLocation); // Then get nearest miklats based on it
 
     var locations = [[currentLocation[0], currentLocation[1]]];
-    for (var i = 0; i < otherLocations.length; i++)
+    for (var i = 0; i < otherLocations.length && i < 3; i++)
         locations.push(otherLocations[i]);
 
     // Create map
