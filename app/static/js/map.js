@@ -212,19 +212,19 @@ async function createMap(fromSearch = false, searchData=null) {
     createPanButton(map);
 
     /*
-     * Populate addresses
+     * Populate miklat table
      */
-    const addressTable = document.getElementById("addresses");
-    addressTable.style.display = "inline";
+    const miklatTable = document.getElementById("miklats");
+    miklatTable.style.display = "inline";
 
     // Remove any existing rows
-    for (var i = 1;i < addressTable.rows.length;){
-        addressTable.deleteRow(i);
+    for (var i = 1;i < miklatTable.rows.length;){
+        miklatTable.deleteRow(i);
     }
 
     // Populate
     for (var i = 1; i < locations.length; i++) {
-        const row = addressTable.insertRow(i);
+        const row = miklatTable.insertRow(i);
 
         const numCell = row.insertCell(0);
         numCell.innerHTML = i;
