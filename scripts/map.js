@@ -6,6 +6,26 @@ class IllegalStateError extends Error {
     }
 }
 
+function haversineDistance(coord1, coord2) {
+    // Convert latitude and longitude from degrees to radians
+    const [lat1, lon1] = coord1.map(coord => coord * (Math.PI / 180));
+    const [lat2, lon2] = coord2.map(coord => coord * (Math.PI / 180));
+
+    // Haversine formula
+    const dLat = lat2 - lat1;
+    const dLon = lon2 - lon1;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    // Radius of the Earth in kilometers
+    const radius = 6371.0;
+
+    // Calculate the distance
+    let distance = (radius * c) * 1000;
+
+    return distance;
+}
+
 // Places functions
 function createPlacesAutcomplete() {
     // Create Autocomplete widget
@@ -66,6 +86,13 @@ function addressComponentsToFull(address_components) {
     return components.sort((a,b) => a[1]>b[1]).map(cmpo => cmpo[0]).join(" ");
 }
 
+function getNearestMiklats(startCoords){
+    const sortedMiklats = MIKLATS.map(m => {
+        const dist = haversineDistance(startCoords, [m.lat, m.long]);
+        return { miklat: m, distance: Math.round(dist) };
+    }).sort((a, b) => a.distance - b.distance);
+    return sortedMiklats;
+}
 
 // Map functions
 
@@ -95,70 +122,21 @@ const getCurrentLocation = () => new Promise((resolve) => {
     }
 });
 
-const getNearestMiklats = (location) => new Promise((resolve) => {
-    post_data = {"start_coords": location, "quick":true, "numResults": 4};
-    results = [];
 
-    // Make request
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "nearest-mamads");
-    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response;
-            var emptyResponse = false;
-
-            try {
-                response = JSON.parse(xhr.response);
-
-                if (response.length == 0)
-                    throw new IllegalStateError("Response for miklats was empty");
-
-            } catch (error) {
-                var errMsg;
-                var logData;
-
-                switch(error.name) {
-                    case "IllegalStateError":
-                        errMsg = "Response data for miklats was empty";
-                        logData = `Request data: ${JSON.stringify(post_data)} -- `;
-                        break;
-                    default:
-                        errMsg = "Error converting response data to JSON";
-                        break;
-                }
-
-                alert(errMsg);
-                logData += error.stack;
-
-                resolve([]);
-            }
-
-            for (var i = 0; i < response.length; i++) {
-                const miklat = response[i];
-
-                const coords = [miklat[0]["lat"], miklat[0]["long"]];
-                const name = miklat[0]["name"]
-                const distanceTo = miklat[1];
-                const address = miklat[0]["address"];
-                const size = miklat[0]["size"]; // m^2
-
-                results.push(coords.concat([name, distanceTo, address, size]));
-            }
-
-            resolve(results);
-
-        } else if (xhr.readyState === 4 && xhr.status !== 200) {
-            alert("Could not get a response from the miklat database");
-            const logData = `Status code: ${xhr.status} -- Status text: ${xhr.statusText} -- Request data: ${JSON.stringify(post_data)}` + " (bad status code)";
-
-            resolve([])
-        }
-    };
-
-    xhr.send(JSON.stringify(post_data));
-});
+function processResults(data){
+    debugger;
+    let results = []
+    for (var i = 0; i < data.length; i++) {
+        const miklat = data[i].miklat;
+        const coords = [miklat["lat"], miklat["long"]];
+        const name = miklat["name"]
+        const distanceTo = data[i].distance;
+        const address = miklat["address"];
+        const size = miklat["size"]; // m^2
+        results.push(coords.concat([name, distanceTo, address, size]));
+    }
+    return results
+}
 
 // Dummy data functions (for testing purposes only)
 function getCurrentLocation2() {
@@ -188,7 +166,7 @@ function getSvgPath(number) {
 // fromClick: if the location data comes from a click
 async function createMap(fromSearch = false, searchData=null, fromClick = false) {
     var currentLocation = (fromSearch ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
-    var otherLocations = await getNearestMiklats(currentLocation); // Then get nearest miklats based on it
+    var otherLocations = processResults(getNearestMiklats(currentLocation)); // Then get nearest miklats based on it
 
     var locations = [[currentLocation[0], currentLocation[1]]];
     for (var i = 0; i < otherLocations.length && i < 3; i++)

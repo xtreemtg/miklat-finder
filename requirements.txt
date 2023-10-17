@@ -1,5 +1,0 @@
-flask
-geopy
-requests
-flask_sqlalchemy
-flask_migrate
