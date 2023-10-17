@@ -72,12 +72,75 @@ function getCurrentLocation() {
   return [32.079969, 34.848110, "empty address"]
 }
 
-function getNearestMiklats(location) {
+function getNearestMiklats2(location) {
     return [
         [32.080479, 34.846880, "address 1"],
         [32.079469, 34.847763, "address 2"]
     ];
 }
+
+const getNearestMiklats = (location) => new Promise((resolve) => {
+    post_data = {"start_coords": location, "quick":true, "numResults": 4};
+    results = [];
+
+    // Make request
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "nearest-mamads");
+    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response;
+            var emptyResponse = false;
+
+            try {
+                response = JSON.parse(xhr.response);
+
+                if (response.length == 0)
+                    throw new IllegalStateError("Response for miklats was empty");
+
+            } catch (error) {
+                var errMsg;
+                var logData;
+
+                switch(error.name) {
+                    case "IllegalStateError":
+                        errMsg = "Response data for miklats was empty";
+                        logData = `Request data: ${JSON.stringify(post_data)} -- `;
+                        break;
+                    default:
+                        errMsg = "Error converting response data to JSON";
+                        break;
+                }
+
+                alert(errMsg);
+                logData += error.stack;
+
+                resolve([]);
+            }
+
+            for (var i = 0; i < response.length; i++) {
+                const miklat = response[i];
+
+                const coords = miklat[0]["coordinates"];
+                const name = miklat[0]["name"]
+                const distanceTo = miklat[1];
+
+                results.push(coords.concat([name, distanceTo]));
+            }
+
+            resolve(results);
+
+        } else if (xhr.readyState === 4 && xhr.status !== 200) {
+            alert("Could not get a response from the miklat database");
+            const logData = `Status code: ${xhr.status} -- Status text: ${xhr.statusText} -- Request data: ${JSON.stringify(post_data)}` + " (bad status code)";
+
+            resolve([])
+        }
+    };
+
+    xhr.send(JSON.stringify(post_data));
+});
 
 // SVG icons that display a pin with 1, 2, or 3 (respectively)
 function getSvgPath(number) {
