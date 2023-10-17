@@ -9,13 +9,13 @@
     <script src="scripts/map.js"></script>
 </head>
 <body onload="createPlacesAutcomplete()">
-    <h1 style="color: #FF0000;">GIVAT SHMUEL ONLY</h1>
-    <div>
-        <div style="display: flex;">
+    <div style="text-align: center;">
+        <h1 style="color: #FF0000;">GIVAT SHMUEL ONLY</h1>
+        <div>
             <button class="find" onclick="createMap();">Find nearest miklat</button>
-            OR by address:
+            <div>OR by address</div>
             <div>
-                <input id="addressbar" type="text" size="50" style="display: block;" placeholder="Input address"></input>
+                <input id="addressbar" type="text" size="50" placeholder="Input address"></input>
                 <span id="address-error" style="position: relative;color: #FF0000;display: none;">Could not find location specified</span>
             </div>
         </div>
@@ -28,9 +28,9 @@
                 <th>Size (m<sup>2</sup>)</th>
             </tr>
         </table>
+        <div id="map" style="width: 500px; height: 400px; display: none; margin-left: auto; margin-right: auto;"></div>
     </div>
-    <div id="map" style="width: 500px; height: 400px; display: none;"></div>
-    <div>
+    <div style="text-align: center;">
         <h4>If you can't reach a mamad/miklat in time and are...</h4>
         <ul class="wrapper">
             <li>
