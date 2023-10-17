@@ -91,8 +91,8 @@ function getSvgPath(number) {
 }
 
 function createMap(fromSearch = false, searchData=null) {
-    var currentLocation = fromSearch ? searchData : getCurrentLocation(); // First get the current location
     var otherLocations = getNearestMiklats(currentLocation); // Then get nearest miklats based on it
+    var currentLocation = (fromSearch ? searchData : getCurrentLocation()).slice(0,2); // First get the current location
 
     var locations = [[currentLocation[0], currentLocation[1]]];
     for (var i = 0; i < otherLocations.length; i++)
