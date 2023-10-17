@@ -175,6 +175,12 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     });
     map.markers = []; // Add new attribute, so we can keep track of the map's markers
 
+    // Enable searching for nearby miklats where user clicks
+    map.addListener("click", async (mapsMouseEvent) => {
+        const mouseLocation = mapsMouseEvent.latLng;
+        await createMap(true, [mouseLocation.lat(), mouseLocation.lng()], true);
+    });
+
   // Icon for miklats
     const svgMarker = {
       /*
