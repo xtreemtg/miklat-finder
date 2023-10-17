@@ -125,8 +125,10 @@ const getNearestMiklats = (location) => new Promise((resolve) => {
                 const coords = miklat[0]["coordinates"];
                 const name = miklat[0]["name"]
                 const distanceTo = miklat[1];
+                const address = miklat[0]["address"];
+                const size = miklat[0]["size"]; // m^2
 
-                results.push(coords.concat([name, distanceTo]));
+                results.push(coords.concat([name, distanceTo, address, size]));
             }
 
             resolve(results);
@@ -242,10 +244,13 @@ async function createMap(fromSearch = false, searchData=null) {
         nameCell.innerHTML = locations[i][2];
 
         const addressCell = row.insertCell(2);
-        addressCell.innerHTML = "--"; // Not ready yet
+        addressCell.innerHTML = locations[i][4];
 
         const distanceCell = row.insertCell(3);
         distanceCell.innerHTML = locations[i][3];
+
+        const sizeCell = row.insertCell(4);
+        sizeCell.innerHTML = locations[i][5];
 
         // Align cells
         for (var j = 0; j < row.cells.length; j++)
