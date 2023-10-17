@@ -184,19 +184,28 @@ async function createMap(fromSearch = false, searchData=null) {
       anchor: new google.maps.Point(0, 20),
     };
 
+    // Create boundary to fit all miklats in
+    const bounds = new google.maps.LatLngBounds();
+
     // Add markers
     for (var i = 0; i < locations.length; i++) {
-      const markerData = {position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map};
+        const markerData = {position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map};
 
-      // User's current location has default marker, miklats have custom marker
-      if (i>0) {
-        svgMarker["path"] = getSvgPath(i);
-        markerData.icon = svgMarker;
-      }
+        // User's current location has default marker, miklats have custom marker
+        if (i>0) {
+            svgMarker["path"] = getSvgPath(i);
+            markerData.icon = svgMarker;
+        }
 
-      marker = new google.maps.Marker(markerData);
-      map.markers.push(marker);
+        marker = new google.maps.Marker(markerData);
+        map.markers.push(marker);
+
+        // Extend boundary
+        bounds.extend(marker.position);
     }
+
+    // Fit map to boundary
+    map.fitBounds(bounds);
 
     // Start tracking user's position
     if (navigator.geolocation) {
