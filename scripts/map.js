@@ -173,7 +173,10 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         locations.push(otherLocations[i]);
 
     // Create map
-    var map = new google.maps.Map(document.getElementById('map'), {
+    const mapElement = document.getElementById("map");
+    mapElement.style.display = "block";
+
+    var map = new google.maps.Map(mapElement, {
         zoom: 17,
         center: new google.maps.LatLng(locations[0][0], locations[0][1]),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
