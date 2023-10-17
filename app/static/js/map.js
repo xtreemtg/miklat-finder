@@ -242,6 +242,9 @@ async function createMap(fromSearch = false, searchData=null) {
         for (var j = 0; j < row.cells.length; j++)
             row.cells[j].style.textAlign = "center";
     }
+
+    // Finally, list the nearest miklat distance in an alert
+    alert(`The nearest miklat is ${locations[1][3]} meters away`);
 }
 
 // Location functions
