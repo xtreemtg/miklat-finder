@@ -12,11 +12,6 @@
     word-wrap: break-word;
 }
 
-/*button.building {
-    background-image: url("images/building.png");
-    background-repeat: no-repeat;
-    background-position: 8px 8px;
-}*/
 button span {
     vertical-align: middle;
     font-weight: bold;
