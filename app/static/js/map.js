@@ -112,16 +112,18 @@ function createMap(fromSearch = false, searchData=null) {
       scale: 2,
       anchor: new google.maps.Point(0, 20),
     };
-    var icon = null; // What icon will be displayed for which marker. User's current location has default marker, miklats have custom marker
 
     // Add markers
     for (var i = 0; i < locations.length; i++) {
+      const markerData = {position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map};
+
+      // User's current location has default marker, miklats have custom marker
       if (i>0) {
         svgMarker["path"] = getSvgPath(i);
-        icon = svgMarker;
+        markerData.icon = svgMarker;
       }
 
-      marker = new google.maps.Marker({position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map, icon: icon});
+      marker = new google.maps.Marker(markerData);
       map.markers.push(marker);
     }
 
