@@ -122,7 +122,7 @@ const getNearestMiklats = (location) => new Promise((resolve) => {
             for (var i = 0; i < response.length; i++) {
                 const miklat = response[i];
 
-                const coords = miklat[0]["coordinates"];
+                const coords = [miklat[0]["lat"], miklat[0]["long"]];
                 const name = miklat[0]["name"]
                 const distanceTo = miklat[1];
                 const address = miklat[0]["address"];
