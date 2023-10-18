@@ -10,6 +10,7 @@ function localizePage(locale="en") {
             locale_json = HE_JSON;
             break;
     }
+    localStorage.setItem("locale", locale);
 
     // Get all locale elements
     const localeElements = document.querySelectorAll("[locale-value]");
@@ -39,10 +40,12 @@ function localizePage(locale="en") {
 
 function setToLTR() {
     document.getElementsByTagName("html")[0].dir = "ltr";
+    localStorage.setItem("direction", "ltr");
 }
 
 function setToRTL() {
     document.getElementsByTagName("html")[0].dir = "rtl";
+    localStorage.setItem("direction", "rtl");
 }
 
-localizePage();
+localizePage(localStorage.getItem("locale"));
