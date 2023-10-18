@@ -175,7 +175,8 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         zoom: 17,
         center: new google.maps.LatLng(locations[0][0], locations[0][1]),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControl: false
+        mapTypeControl: false,
+        gestureHandling: "greedy"
     });
     map.markers = []; // Add new attribute, so we can keep track of the map's markers
 
