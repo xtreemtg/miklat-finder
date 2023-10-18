@@ -37,7 +37,6 @@
     "train-text": "When traveling by train - ",
     "train-instruction": "the driver must slow down to a speed of 30 km/h for 10 minutes, the passengers must bend below the window line in the carriages and protect their heads with their hands.",
 
-    "location-public-transportation": "On public transportation",
     "attribution-text": "(instructions and icons taken from Pikud Haoref at ",
     "instruction-link": "https://www.oref.org.il/12761-en/pakar.aspx"
  };
