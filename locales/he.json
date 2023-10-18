@@ -1,5 +1,6 @@
  var HE_JSON = {
     "banner-message": "גבעת שמואל בלבד",
+    "location-enable": "(תוודא/י שמיקום הופעל במכשיר שלך ותאפשר/י גישה למיקום בדפדפן)",
     "nearest-miklat-button": "חפש מקלט הכי קרוב לך",
     "by-address": "או לפי כתובת",
     "address-search": "הזן כתובת",
