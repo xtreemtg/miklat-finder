@@ -105,16 +105,29 @@ const getCurrentLocation = () => new Promise((resolve) => {
 
 function processResults(data){
     let results = [];
-    const lang = (localStorage.getItem("locale") === "he") ? "Heb" : "";
+
+    // Use english field if hebrew is missing
+    const handleMissingValue = (dict, localeStr, field) => {
+        var fieldValue = dict[field + localeStr];
+
+        if (localeStr === "Heb" && (dict[field + "Heb"] === null || dict[field + "Heb"].match(/^\s*$/) !== null)) {
+            fieldValue = dict[field]
+        }
+
+        return fieldValue;
+    };
+    const localeStr = (localStorage.getItem("locale") === "he") ? "Heb" : "";
 
     for (var i = 0; i < data.length; i++) {
         const miklat = data[i].miklat;
+
         const coords = [miklat["lat"], miklat["long"]];
         const name = miklat["name"]
         const distanceTo = data[i].distance;
-        const address = miklat["address" + lang];
+        const address = handleMissingValue(miklat, localeStr, "address");
         const size = miklat["size"]; // m^2
-        const comments = miklat["comments" + lang];
+        const comments = handleMissingValue(miklat, localeStr, "comments");
+
         results.push(coords.concat([name, distanceTo, address, size, comments]));
     }
     return results
