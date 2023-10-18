@@ -12,7 +12,7 @@ function localizePage(locale="en") {
     }
     localStorage.setItem("locale", locale);
 
-    // Get all locale elements
+    // Set all locale elements
     const localeElements = document.querySelectorAll("[locale-value]");
 
     for (let i = 0; i < localeElements.length; i++) {
@@ -34,7 +34,21 @@ function localizePage(locale="en") {
                 nodeToChange.nodeValue = locale_json[localeElement.getAttribute("locale-value")];
             }
         } catch (error) {
+            console.log(`Error! Could not set locale value for ${localeElement.getAttribute("locale-value")}`);
         }
+    }
+
+    // Set ltr/rtl for all collapsible headers
+    const collapsibleHeaders = document.getElementsByClassName("collapsible");
+    const isRTL = localStorage.getItem("direction") === "rtl";
+
+    for (let i = 0; i < collapsibleHeaders.length; i++) {
+        const header = collapsibleHeaders[i];
+
+        if (isRTL)
+            header.style.textAlign = "right";
+        else
+            header.style.textAlign = "left";
     }
 }
 
