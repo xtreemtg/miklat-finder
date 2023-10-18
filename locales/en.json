@@ -1,0 +1,42 @@
+ var EN_JSON = {
+    "banner-message": "GIVAT SHMUEL ONLY",
+    "nearest-miklat-button": "Find nearest miklat",
+    "by-address": "OR by address",
+    "address-search": "Input address",
+    "address-error": "Could not find location specified",
+    "miklat-num": "Number",
+    "miklat-name": "Miklat Name",
+    "miklat-address": "Address",
+    "miklat-notes": "Notes",
+    "miklat-distance": "Distance away",
+    "miklat-size": "Size",
+    "cant-reach-start": "If you can't reach a mamad/miklat in time and are...",
+    "location-indoors": "Indoors",
+    "location-outside": "Outside",
+    "location-vehicle": "In a vehicle",
+
+    "stairwell-text": "Inner stairwell - ",
+    "stairwell-instruction": "without windows, openings or external walls. Sit on the stairs and not in the floor space. In a building with more than three floors – stay in the staircase that has at least two floors above it. In a building with less than three floors – stay in the middle floor.",
+    "room-text": "Inner room - ",
+    "room-instruction": "with as few outside walls, windows and openings as possible. Sit in an inner corner under a window line and not In front of the door. Kitchens, bathrooms or toilets cannot be used as an inner room.",
+
+    "built-up-text": "In a built-up area - ",
+    "built-up-instruction": "enter a shelter or a stairwell of a nearby building. Stay away from the entrance area.",
+    "open-area-text": "In an open area - ",
+    "open-area-instruction": "lie on the ground and protect your head with your hands. When a rocket hits the ground, the explosion blast wave generates fragments that can injure anyone standing up or sitting down.",
+
+    "vehicle-instruction1": "Stop the vehicle on the side of the road, get out of the car and enter a shelter or a stairwell in a nearby building.",
+    "vehicle-instruction2": "If you cannot reach shelter within the time available to reach shelter – get out and move away from the vehicle to the side of the road or beyond the separation fence, lie on the ground and protect your head with your hands.",
+    "vehicle-instruction3": "Only if you are unable to get out of the vehicle, stop at the side of the road and bend below window line.",
+
+    "intracity-transportation-text": "On an intercity bus and student transportation - ",
+    "intracity-transportation-instruction": "the driver must stop the vehicle at the side of the road and open the doors, and the passengers must bend below the window line and protect their heads with their hands.",
+    "intercity-transportation-text": "On a city bus - ",
+    "intercity-transportation-instruction": "the driver must stop on the side of the road and open the doors for the passengers to get off and enter a nearby building. If it is not possible to reach the building in the time available, bend below the window line and protect your head with your hands.",
+    "train-text": "When traveling by train - ",
+    "train-instruction": "the driver must slow down to a speed of 30 km/h for 10 minutes, the passengers must bend below the window line in the carriages and protect their heads with their hands.",
+
+    "location-public-transportation": "On public transportation",
+    "attribution-text": "(instructions and icons taken from Pikud Haoref at ",
+    "instruction-link": "https://www.oref.org.il/12761-en/pakar.aspx"
+ };
