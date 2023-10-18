@@ -273,19 +273,20 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         const numCell = row.insertCell(0);
         numCell.innerHTML = i;
 
-        const nameCell = row.insertCell(1);
-        nameCell.innerHTML = locations[i][2];
+        // Removed as it's unecessary and too confusing'
+        /*const nameCell = row.insertCell(1);
+        nameCell.innerHTML = locations[i][2];*/
 
-        const addressCell = row.insertCell(2);
+        const addressCell = row.insertCell(1);
         addressCell.innerHTML = locations[i][4];
 
-        const notesCell = row.insertCell(3);
         notesCell.innerHTML = "--";//locations[i][4];
+        const notesCell = row.insertCell(2);
 
-        const distanceCell = row.insertCell(4);
+        const distanceCell = row.insertCell(3);
         distanceCell.innerHTML = locations[i][3];
 
-        const sizeCell = row.insertCell(5);
+        const sizeCell = row.insertCell(4);
         sizeCell.innerHTML = locations[i][5];
 
         // Align cells
