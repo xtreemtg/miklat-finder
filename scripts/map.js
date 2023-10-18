@@ -162,7 +162,13 @@ function getSvgPath(number) {
 async function createMap(fromSearch = false, searchData=null, fromClick = false) {
     var currentLocation = (fromSearch ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
     var otherLocations = processResults(getNearestMiklats(currentLocation)); // Then get nearest miklats based on it
-
+     if (!pointInGabash(currentLocation)){
+        let msgEng = fromSearch ? "Search Addresses only in Givat Shmuel!" : "You are not in Givat Shmuel!"
+         let msgHeb = fromSearch ? "חפש/י כתובות רק בגבעת שמואל!" : "את/ה לא נמצא/ת בגבעת שמואל!"
+         let msg = (localStorage.getItem("locale") === "he") ? msgHeb : msgEng
+        alert(msg)
+        return
+    }
     var locations = [[currentLocation[0], currentLocation[1]]];
     for (var i = 0; i < otherLocations.length && i < 3; i++)
         locations.push(otherLocations[i]);
@@ -294,7 +300,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     miklatTable.scrollIntoView(); // Scroll so table and map are in full view
 
     // Finally, list the nearest miklat distance in an alert
-    var nearestMsg = (localStorage.getItem("locale") === "he") ? "המקלט הכח קרוב בעוד XXX מטרים" : "The nearest miklat is XXX meters away";
+    var nearestMsg = (localStorage.getItem("locale") === "he") ? "המקלט הכי קרוב בעוד XXX מטרים" : "The nearest miklat is XXX meters away";
     alert(nearestMsg.replace("XXX", locations[1][3]));
 }
 
