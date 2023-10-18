@@ -1,5 +1,4 @@
-// Still in development
-function localizePage(locale="en") {
+function getLocaleJson(locale) {
     var locale_json;
 
     switch(locale) {
@@ -10,6 +9,12 @@ function localizePage(locale="en") {
             locale_json = HE_JSON;
             break;
     }
+
+    return locale_json;
+}
+
+function localizePage(locale="en") {
+    const locale_json = getLocaleJson(locale);
     localStorage.setItem("locale", locale);
 
     // Set all locale elements
