@@ -21,8 +21,6 @@ function localizePage() {
                 nodeToChange.nodeValue = EN_JSON[localeElement.getAttribute("locale-value")];
             }
         } catch (error) {
-            // remove for live release
-            alert(`Error setting locale value for ${localeElement.getAttribute("locale-value")}`);
         }
     }
 }
