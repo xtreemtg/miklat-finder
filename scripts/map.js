@@ -132,7 +132,8 @@ function processResults(data){
         const distanceTo = data[i].distance;
         const address = miklat["address"];
         const size = miklat["size"]; // m^2
-        results.push(coords.concat([name, distanceTo, address, size]));
+        const comments = miklat["comments"];
+        results.push(coords.concat([name, distanceTo, address, size, comments]));
     }
     return results
 }
@@ -280,8 +281,8 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         const addressCell = row.insertCell(1);
         addressCell.innerHTML = locations[i][4];
 
-        notesCell.innerHTML = "--";//locations[i][4];
         const notesCell = row.insertCell(2);
+        notesCell.innerHTML = (locations[i][6] === null) ? "--" : locations[i][6];
 
         const distanceCell = row.insertCell(3);
         distanceCell.innerHTML = locations[i][3];
