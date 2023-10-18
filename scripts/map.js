@@ -124,15 +124,17 @@ const getCurrentLocation = () => new Promise((resolve) => {
 
 
 function processResults(data){
-    let results = []
+    let results = [];
+    const lang = (localStorage.getItem("locale") === "he") ? "Heb" : "";
+
     for (var i = 0; i < data.length; i++) {
         const miklat = data[i].miklat;
         const coords = [miklat["lat"], miklat["long"]];
         const name = miklat["name"]
         const distanceTo = data[i].distance;
-        const address = miklat["address"];
+        const address = miklat["address" + lang];
         const size = miklat["size"]; // m^2
-        const comments = miklat["comments"];
+        const comments = miklat["comments" + lang];
         results.push(coords.concat([name, distanceTo, address, size, comments]));
     }
     return results
