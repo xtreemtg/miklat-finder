@@ -124,7 +124,6 @@ const getCurrentLocation = () => new Promise((resolve) => {
 
 
 function processResults(data){
-    debugger;
     let results = []
     for (var i = 0; i < data.length; i++) {
         const miklat = data[i].miklat;
