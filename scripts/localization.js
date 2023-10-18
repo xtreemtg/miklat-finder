@@ -17,13 +17,17 @@ function localizePage(locale="en") {
 
     for (let i = 0; i < localeElements.length; i++) {
         const localeElement = localeElements[i];
+        const localeValue = locale_json[localeElement.getAttribute("locale-value")];
 
         try {
             if (localeElement.tagName == "INPUT")
-                localeElement.setAttribute("placeholder", locale_json[localeElement.getAttribute("locale-value")]);
+                localeElement.setAttribute("placeholder", localeValue);
             else {
-                if (localeElement.tagName == "A")
-                    localeElement.setAttribute("href", locale_json[localeElement.getAttribute("locale-value")]);
+                if (localeElement.tagName == "A") {
+                    var mailto = localeElement.getAttribute("locale-value").includes("email") ? "mailto: " : "";
+
+                    localeElement.setAttribute("href", mailto + localeValue);
+                }
 
                 // Handle initial element being a bold tag
                 var nodeToChange = localeElement.childNodes[0];
@@ -31,7 +35,7 @@ function localizePage(locale="en") {
                 if (nodeToChange.tagName == "B")
                     nodeToChange = localeElement.childNodes[1];
 
-                nodeToChange.nodeValue = locale_json[localeElement.getAttribute("locale-value")];
+                nodeToChange.nodeValue = localeValue;
             }
         } catch (error) {
             console.log(`Error! Could not set locale value for ${localeElement.getAttribute("locale-value")}`);
