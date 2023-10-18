@@ -280,10 +280,13 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         const addressCell = row.insertCell(2);
         addressCell.innerHTML = locations[i][4];
 
-        const distanceCell = row.insertCell(3);
+        const notesCell = row.insertCell(3);
+        notesCell.innerHTML = "--";//locations[i][4];
+
+        const distanceCell = row.insertCell(4);
         distanceCell.innerHTML = locations[i][3];
 
-        const sizeCell = row.insertCell(4);
+        const sizeCell = row.insertCell(5);
         sizeCell.innerHTML = locations[i][5];
 
         // Align cells
