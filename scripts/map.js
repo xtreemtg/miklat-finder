@@ -256,7 +256,8 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
      * Populate miklat table
      */
     const miklatTable = document.getElementById("miklats");
-    miklatTable.style.display = "inline";
+    miklatTable.style.display = "table";
+    miklatTable.style.margin = "auto";
 
     // Remove any existing rows
     for (var i = 1;i < miklatTable.rows.length;){
