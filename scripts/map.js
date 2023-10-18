@@ -291,6 +291,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         for (var j = 0; j < row.cells.length; j++)
             row.cells[j].style.textAlign = "center";
     }
+    miklatTable.scrollIntoView(); // Scroll so table and map are in full view
 
     // Finally, list the nearest miklat distance in an alert
     alert(`The nearest miklat is ${locations[1][3]} meters away`);
