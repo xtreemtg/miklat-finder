@@ -320,7 +320,7 @@ function getLocationErrorMessage(code) {
 function createPanButton(map) {
     const locationButton = document.createElement("button");
 
-    locationButton.textContent = "Pan to Current Location";
+    locationButton.textContent = getLocaleJson(localStorage.getItem("locale"))["pan-to-location"];
     locationButton.classList.add("custom-map-control-button");
     locationButton.style.backgroundColor = "#90ee90";
     locationButton.style.fontWeight = "bold";
