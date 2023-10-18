@@ -14,6 +14,7 @@
     "location-indoors": "Indoors",
     "location-outside": "Outside",
     "location-vehicle": "In a vehicle",
+    "location-public-transportation": "On public transportation",
 
     "stairwell-text": "Inner stairwell - ",
     "stairwell-instruction": "without windows, openings or external walls. Sit on the stairs and not in the floor space. In a building with more than three floors – stay in the staircase that has at least two floors above it. In a building with less than three floors – stay in the middle floor.",
