@@ -37,4 +37,12 @@ function localizePage(locale="en") {
     }
 }
 
+function setToLTR() {
+    document.getElementsByTagName("html")[0].dir = "ltr";
+}
+
+function setToRTL() {
+    document.getElementsByTagName("html")[0].dir = "rtl";
+}
+
 localizePage();
