@@ -158,7 +158,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         return
     }
     var locations = [[currentLocation[0], currentLocation[1]]];
-    for (var i = 0; i < otherLocations.length && i < 3; i++)
+    for (var i = 0; i < otherLocations.length && i < 13; i++) // 3 nearest miklats + 10 closest after those
         locations.push(otherLocations[i]);
 
     // Create map
@@ -204,17 +204,21 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     for (var i = 0; i < locations.length; i++) {
         const markerData = {position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map};
 
-        // User's current location has default marker, miklats have custom marker
-        if (i>0) {
+        // User's current location has default marker, nearest 3 miklats have custom number marker, rest have default custom marker
+        if (i>0 && i <= 3) {
             svgMarker.path = getSvgPath(i);
+            markerData.icon = svgMarker;
+        } else if (i >= 4) {
+            svgMarker.path = svgMarker.defaultPath;
             markerData.icon = svgMarker;
         }
 
         marker = new google.maps.Marker(markerData);
         map.markers.push(marker);
 
-        // Extend boundary
-        bounds.extend(marker.position);
+        // Extend boundary (only for nearest miklats)
+        if (i <= 3)
+            bounds.extend(marker.position);
     }
 
     // Add marker where user clicked/selected address
@@ -259,7 +263,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     }
 
     // Populate
-    for (var i = 1; i < locations.length; i++) {
+    for (var i = 1; i < Math.min(3+1, locations.length); i++) { // Too many locations is too much for the user in a quick situation
         const row = miklatTable.insertRow(i);
 
         const numCell = row.insertCell(0);
