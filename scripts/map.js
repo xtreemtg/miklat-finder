@@ -301,11 +301,11 @@ function getLocaleText(localeValue) {
 function getLocationErrorMessage(code) {
   switch (code) {
     case 1:
-      return "Permission denied (make sure that Miklat Finder has access to your phone's location)";
+      return getLocaleText("geolocation-error-permission");
     case 2:
-      return "Position unavailable (make sure that location is enabled on your phone)";
+      return getLocaleText("geolocation-error-position");
     case 3:
-      return "Timeout reached (refreshing the page may help)";
+      return getLocaleText("geolocation-error-timeout");
   }
 }
 
