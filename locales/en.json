@@ -1,6 +1,10 @@
  var EN_JSON = {
     "popup-nearest-miklat": "The nearest miklat is XXX meters away (map will open after closing this popup)",
 
+    "geolocation-error-permission": "Permission denied (make sure that Miklat Finder has access to your phone's location)",
+    "geolocation-error-position": "Position unavailable (make sure that location is enabled on your phone)",
+    "geolocation-error-timeout": "Timeout reached (refreshing the page, or closing the tab and opening a new one, may help)",
+
     "banner-message": "GIVAT SHMUEL LOCATIONS ONLY",
     "location-enable": "(make sure that location is enabled on your device and allow your browser to access location data)",
     "nearest-miklat-button": "Find nearest miklat",
