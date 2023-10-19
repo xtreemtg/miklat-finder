@@ -1,4 +1,6 @@
  var EN_JSON = {
+    "popup-nearest-miklat": "The nearest miklat is XXX meters away (map will open after closing this popup)",
+
     "banner-message": "GIVAT SHMUEL LOCATIONS ONLY",
     "location-enable": "(make sure that location is enabled on your device and allow your browser to access location data)",
     "nearest-miklat-button": "Find nearest miklat",

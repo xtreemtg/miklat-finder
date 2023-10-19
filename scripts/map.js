@@ -288,8 +288,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     miklatTable.scrollIntoView(); // Scroll so table and map are in full view
 
     // Finally, list the nearest miklat distance in an alert
-    var nearestMsg = (localStorage.getItem("locale") === "he") ? "המקלט הכי קרוב בעוד XXX מטרים" : "The nearest miklat is XXX meters away";
-    alert(nearestMsg.replace("XXX", locations[1][3]));
+    alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[1][3]));
 }
 
 // Helper function for easily getting locale text
