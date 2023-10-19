@@ -148,7 +148,7 @@ function getSvgPath(number) {
 // fromSearch: if the location data comes from an address search
 // fromClick: if the location data comes from a click
 async function createMap(fromSearch = false, searchData=null, fromClick = false) {
-    var currentLocation = (fromSearch ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
+    var currentLocation = (fromSearch || fromClick ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
     var otherLocations = processResults(getNearestMiklats(currentLocation)); // Then get nearest miklats based on it
      if (!pointInGabash(currentLocation)){
         let msgEng = fromSearch ? "Search Addresses only in Givat Shmuel!" : "You are not in Givat Shmuel!"
@@ -177,7 +177,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     // Enable searching for nearby miklats where user clicks
     map.addListener("click", async (mapsMouseEvent) => {
         const mouseLocation = mapsMouseEvent.latLng;
-        await createMap(true, [mouseLocation.lat(), mouseLocation.lng()], true);
+        await createMap(false, [mouseLocation.lat(), mouseLocation.lng()], true);
     });
 
   // Icon for miklats
