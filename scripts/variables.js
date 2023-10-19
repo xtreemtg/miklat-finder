@@ -337,6 +337,51 @@ MIKLATS = [
   "addressHeb":"סמטת יצחק מודעי 5",
   "nameHeb":"סמטת יצחק מודעי 5",
   "commentsHeb":null
+ },
+ {
+  "name":"David Ben Gurion Street 10",
+  "address":"David Ben Gurion Street 10",
+  "lat":32.076602,
+  "long":34.84648,
+  "size":null,
+  "type":"Apartment",
+  "description":"ground floor",
+  "isPublic":false,
+  "comments":null,
+  "cityID":null,
+  "addressHeb":null,
+  "nameHeb":null,
+  "commentsHeb":null
+ },
+ {
+  "name":"HaPalmach 8",
+  "address":"HaPalmach 8",
+  "lat":32.080479,
+  "long":34.84688,
+  "size":null,
+  "type":"Apartment",
+  "description":"next to the stairs",
+  "isPublic":false,
+  "comments":"next to the stairs",
+  "cityID":null,
+  "addressHeb":"הפלמ\"ח 8",
+  "nameHeb":"הפלמ\"ח 8",
+  "commentsHeb":"ליד המדרגות"
+ },
+ {
+  "name":"David Ben Gurion Street 21",
+  "address":"David Ben Gurion Street 21",
+  "lat":32.079282,
+  "long":34.847573,
+  "size":null,
+  "type":"Apartment",
+  "description":"ground floor",
+  "isPublic":null,
+  "comments":null,
+  "cityID":null,
+  "addressHeb":"בן גוריון 21",
+  "nameHeb":"בן גוריון 21",
+  "commentsHeb":null
  }
 ]
 
