@@ -133,18 +133,6 @@ function processResults(data){
     return results
 }
 
-// Dummy data functions (for testing purposes only)
-function getCurrentLocation2() {
-  return [32.079969 + 0.001, 34.848110, "empty address"]
-}
-
-function getNearestMiklats2(location) {
-    return [
-        [32.080479, 34.846880, "address 1"],
-        [32.079469, 34.847763, "address 2"]
-    ];
-}
-
 // SVG icons that display a pin with 1, 2, or 3 (respectively)
 function getSvgPath(number) {
     switch(number) {
