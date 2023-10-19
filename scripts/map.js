@@ -292,6 +292,11 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     alert(nearestMsg.replace("XXX", locations[1][3]));
 }
 
+// Helper function for easily getting locale text
+function getLocaleText(localeValue) {
+    return getLocaleJson(localStorage.getItem("locale"))[localeValue];
+}
+
 // Location functions
 function getLocationErrorMessage(code) {
   switch (code) {
@@ -308,7 +313,7 @@ function getLocationErrorMessage(code) {
 function createPanButton(map) {
     const locationButton = document.createElement("button");
 
-    locationButton.textContent = getLocaleJson(localStorage.getItem("locale"))["pan-to-location"];
+    locationButton.textContent = getLocaleText("pan-to-location");
     locationButton.classList.add("custom-map-control-button");
     locationButton.style.backgroundColor = "#90ee90";
     locationButton.style.fontWeight = "bold";
