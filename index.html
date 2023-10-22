@@ -19,6 +19,19 @@
         if (localStorage.getItem("locale") === null)
             localStorage.setItem("locale", "en");
 
+        // Set title if it does
+        else {
+            switch(localStorage.getItem("locale")) {
+                case "en":
+                    document.title = "Miklat Finder";
+                    break;
+
+                case "he":
+                    document.title = "חיפוש מקלט";
+                    break;
+            }
+        }
+
         // Try to get direction from local storage
         if (localStorage.getItem("direction") !== null)
             document.getElementsByTagName("html")[0].dir = localStorage.getItem("direction");
@@ -26,8 +39,8 @@
 </head>
 <body onload="createPlacesAutcomplete();">
     <div style="display: flex;">
-        <button id="en-btn" onclick="setToLTR(); localizePage('en');">English</button>
-        <button id="he-btn" onclick="setToRTL(); localizePage('he');">עברית</button>
+        <button id="en-btn" onclick="setToLTR(); localizePage('en'); document.title = 'Miklat Finder';">English</button>
+        <button id="he-btn" onclick="setToRTL(); localizePage('he'); document.title = 'חיפוש מקלט';">עברית</button>
     </div>
     <div style="text-align: center;">
         <h1 style="color: #FF0000;" locale-value="banner-message">GIVAT SHMUEL LOCATIONS ONLY</h1>
