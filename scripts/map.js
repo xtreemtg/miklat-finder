@@ -1,14 +1,4 @@
-
-MIKLATS = null
-
-// Custom errors
-class IllegalStateError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "IllegalStateError";
-    }
-}
-
+MIKLATS = null; // List of miklats fetched from server
 
 // Places functions
 function createPlacesAutcomplete() {
@@ -39,28 +29,32 @@ function createPlacesAutcomplete() {
     });
 }
 
-function fetchMiklats(){
-    if(MIKLATS === null) {
-        var url = "https://api.jsonbin.io/v3/b/6534ef9c12a5d376598ef61f"
-        var xhr = new XMLHttpRequest();
+function fetchMiklats() {
+    if (MIKLATS === null) {
+        const url = "https://api.jsonbin.io/v3/b/6534ef9c12a5d376598ef61f";
+        const xhr = new XMLHttpRequest();
+
         xhr.open("GET", url, false);
-        xhr.send()
+        xhr.send();
+
         if (xhr.status === 200) {
-            MIKLATS = JSON.parse(xhr.responseText)["record"]
+            MIKLATS = JSON.parse(xhr.responseText)["record"];
+
         } else {
-            alert("Error fetching miklats. Please try again later")
+            alert("Error fetching miklats. Please try again later");
             throw new Error('Request failed with status ' + xhr.status);
         }
     }
 }
 
+function getNearestMiklats(startCoords) {
+    fetchMiklats();
 
-function getNearestMiklats(startCoords){
-    fetchMiklats()
     const sortedMiklats = MIKLATS.map(m => {
         const dist = haversineDistance(startCoords, [m.lat, m.long]);
         return { miklat: m, distance: Math.round(dist) };
     }).sort((a, b) => a.distance - b.distance);
+
     return sortedMiklats;
 
 }
@@ -176,6 +170,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     const currentLocation = (fromSearch || fromClick ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
     var closestMiklats = getNearestMiklats(currentLocation);
     var otherLocations = processResults(closestMiklats);// Then get nearest miklats based on it
+
     // Prevent map creation if location is outside Givat Shmuel
      if (!pointInGabash(currentLocation)) {
         const msg = (fromSearch || fromClick) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
