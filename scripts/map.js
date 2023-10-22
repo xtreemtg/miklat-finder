@@ -94,20 +94,49 @@ const getCurrentLocation = () => new Promise((resolve) => {
 });
 
 
-function processResults(data){
-    let results = [];
+function processResults(data) {
+    const locale = localStorage.getItem("locale");
+    const results = [];
 
-    // Use english field if hebrew is missing
-    const handleMissingValue = (dict, localeStr, field) => {
-        var fieldValue = dict[field + localeStr];
+    // If field is missing in current language, search for next available field
+    const firstAvailable = (dict, field) => {
+        const keysWithField = Object.keys(dict).filter(key => key.includes(field));
+        var langOrder = {"Heb": 1, "": 2}; // Language order in which to try to get the miklat data
 
-        if (localeStr === "Heb" && (dict[field + "Heb"] === null || dict[field + "Heb"].match(/^\s*$/) !== null)) {
-            fieldValue = dict[field]
+        // Handle English/Hebrew in a simple fashion
+        if (locale === "en")
+            langOrder = {"": 1, "Heb": 2};
+
+        else if (locale !== "he") {
+
+            // Get field(s) that matches locale code
+            const langField = keysWithField.filter(key => key.replace(field, "").toLowerCase().includes(localStorage.getItem("locale"))); // Handle uppercase situations
+
+            if (langField.length > 0)
+                langOrder = {
+                    [langField[0].replace(field, "")]: 0,
+                    ...langOrder
+                };
         }
 
-        return fieldValue;
+        // Sort by preferred order
+        const langFields = keysWithField.sort((a,b) => {
+            const langCodeA = a.replace(field, "");
+            const langCodeB = b.replace(field, "");
+
+            return langOrder[langCodeA] - langOrder[langCodeB];
+        });
+        console.log(langFields);
+
+        for (var i = 0; i < langFields.length; i++) {
+            const currentData = dict[langFields[i]];
+
+            if (!(currentData === null || currentData.match(/^\s*$/) !== null))
+                return currentData;
+        }
+
+        return "";
     };
-    const localeStr = (localStorage.getItem("locale") === "he") ? "Heb" : "";
 
     for (var i = 0; i < data.length; i++) {
         const miklat = data[i].miklat;
@@ -115,13 +144,14 @@ function processResults(data){
         const coords = [miklat["lat"], miklat["long"]];
         const name = miklat["name"]
         const distanceTo = data[i].distance;
-        const address = handleMissingValue(miklat, localeStr, "address");
+        const address = firstAvailable(miklat, "address");
         const size = miklat["size"]; // m^2
-        const comments = handleMissingValue(miklat, localeStr, "comments");
+        const comments = firstAvailable(miklat, "comments");
 
         results.push(coords.concat([name, distanceTo, address, size, comments]));
     }
-    return results
+
+    return results;
 }
 
 // SVG icons that display a pin with 1, 2, or 3 (respectively)
