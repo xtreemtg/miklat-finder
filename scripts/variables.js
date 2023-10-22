@@ -376,7 +376,7 @@ MIKLATS = [
   "size":null,
   "type":"Apartment",
   "description":"ground floor",
-  "isPublic":null,
+  "isPublic":false,
   "comments":null,
   "cityID":null,
   "addressHeb":"בן גוריון 21",
