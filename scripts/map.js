@@ -1,69 +1,30 @@
-// Custom errors
-class IllegalStateError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "IllegalStateError";
-    }
-}
-
 // Places functions
 function createPlacesAutcomplete() {
-    // Create Autocomplete widget
     const input = document.getElementById("addressbar");
-    input.value = ""; // Clear text
-
-    const options = {
-        componentRestrictions: { country: "il" },
-        fields: ["address_components", "geometry"],
-        strictBounds: true,
-    };
-    const autocomplete = new google.maps.places.Autocomplete(input, options);
+    input.value = ""; // Clear text upon reload
+    const autocomplete = createAutocompleteObject(input); // Create Autocomplete widget
 
     // Update map when address is selected
-    autocomplete.addListener("place_changed", async (data) => {
+    setPlacesChangesEvent(autocomplete, async (data) => {
         var badData = true;
-        var lat, lng, address;
+        var coords;
 
         try {
-            const placeData = autocomplete.getPlace();
-
-            lat = placeData["geometry"]["location"].lat();
-            lng = placeData["geometry"]["location"].lng();
-            address = addressComponentsToFull(placeData["address_components"]);
+            coords = getAutocompletePlaceLatLng(autocomplete);
             badData = false;
 
         } catch (error) {
             console.log("Error getting location data from Autcomplete widget");
-            // Do not log actual error (or use console.error) for now, to prevent leaking the API key
+            console.log(error);
         }
 
         const errMsg = document.getElementById("address-error");
         if (!badData) {
-            await createMap(true, [lat, lng, address]); // Note: address is not currently used, but may be used in the future, so it is left here
+            await createMap(true, coords);
             errMsg.style.display = "none";
         } else
             errMsg.style.display = "inline";
     });
-}
-
-// Create address name (might be useless function)
-function addressComponentsToFull(address_components) {
-    const components = [];
-    const valid_types = [["route", 0], ["street_number", 1], ["locality", 2]];
-
-    for (var i = 0; i < address_components.length; i++) {
-        const types = address_components[i]["types"];
-
-        // Check that the component types are from what we want
-        if (types.some(r => valid_types.map(t => t[0]).includes(r))) {
-          const name = address_components[i]["long_name"];
-          const type_order = valid_types.filter(vt => vt[0]==types[0])[0][1];
-
-          components.push([name, type_order]);
-        }
-    }
-
-    return components.sort((a,b) => a[1]>b[1]).map(cmpo => cmpo[0]).join(" ");
 }
 
 function getNearestMiklats(startCoords){
@@ -165,84 +126,53 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     const mapElement = document.getElementById("map");
     mapElement.style.display = "block";
 
-    var map = new google.maps.Map(mapElement, {
-        zoom: 17,
-        center: new google.maps.LatLng(locations[0][0], locations[0][1]),
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControl: false,
-        gestureHandling: "greedy"
-    });
-    map.markers = []; // Add new attribute, so we can keep track of the map's markers
+    const map = createMapObject(mapElement, locations[0][0], locations[0][1]);
 
     // Enable searching for nearby miklats where user clicks
-    map.addListener("click", async (mapsMouseEvent) => {
-        const mouseLocation = mapsMouseEvent.latLng;
-        await createMap(false, [mouseLocation.lat(), mouseLocation.lng()], true);
+    addMapClickEvent(map, async (mapsMouseEvent) => {
+        const mouseCoords = getCoordinatesFromMapClick(mapsMouseEvent);
+        await createMap(false, mouseCoords, true);
     });
 
-  // Icon for miklats
-    const svgMarker = {
-      /*
-       * old path code here. leave for when needing to make new SVG paths
-      path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
-      */
-
-      defaultPath: "M 0 0 q 2.906 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z", // Default marker with nothing inside
-      path: "",
-      fillColor: "blue",
-      fillOpacity: 0.6,
-      strokeWeight: 0,
-      rotation: 0,
-      scale: 2,
-      anchor: new google.maps.Point(0, 20),
-    };
-
     // Create boundary to fit all miklats in
-    const bounds = new google.maps.LatLngBounds();
+    const bounds = createMapBoundaryObject();
 
     // Add markers
     for (var i = 0; i < locations.length; i++) {
-        const markerData = {position: new google.maps.LatLng(locations[i][0], locations[i][1]), map: map};
+        const markerData = createMarkerData(map, locations[i][0], locations[i][1]);
 
         // User's current location has default marker, nearest 3 miklats have custom number marker, rest have default custom marker
-        if (i>0 && i <= 3) {
-            svgMarker.path = getSvgPath(i);
-            markerData.icon = svgMarker;
-        } else if (i >= 4) {
-            svgMarker.path = svgMarker.defaultPath;
-            markerData.icon = svgMarker;
-        }
+        if (i>0 && i <= 3)
+            setMarkerDataIconField(markerData, svgMarkerData(getSvgPath(i)));
+        else if (i >= 4)
+            setMarkerDataIconField(markerData, svgMarkerData());
 
-        marker = new google.maps.Marker(markerData);
-        map.markers.push(marker);
+        createMapMarker(map, markerData);
 
         // Extend boundary (only for nearest miklats)
         if (i <= 3)
-            bounds.extend(marker.position);
+            extendMapBoundaryObject(bounds, locations[i][0], locations[i][1]);
     }
 
     // Add marker where user clicked/selected address
     if (fromSearch || fromClick) {
-        const markerData = {position: new google.maps.LatLng(locations[0][0], locations[0][1]), map: map};
+        const markerData = createMarkerData(map, locations[0][0], locations[0][1]);
 
-        svgMarker.path = svgMarker.defaultPath; // Use default marker
-        svgMarker.fillColor = "yellow";
-        svgMarker.fillOpacity = 1;
-        svgMarker.strokeWeight = 1;
-        markerData.icon = svgMarker;
+        // Use default marker for clicked location
+        setMarkerDataIconField(markerData, svgMarkerData("", "yellow", 1, 1));
 
-        const clickMarker = new google.maps.Marker(markerData);
+        createMapMarker(map, markerData);
     }
 
     // Fit map to boundary
-    map.fitBounds(bounds);
+    fitMapToBoundary(map, bounds);
 
     // Start tracking user's position
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((pos) => {
             const latitude = pos.coords.latitude;
             const longitude = pos.coords.longitude;
-            map.markers[0].setPosition({lat: latitude, lng: longitude});
+            setMarkerPosition(getMapMarkers(map)[0], latitude, longitude);
 
         }, (error) => {});
     }
@@ -318,12 +248,11 @@ function createPanButton(map) {
     const locationButton = document.createElement("button");
 
     locationButton.textContent = getLocaleText("pan-to-location");
-    locationButton.classList.add("custom-map-control-button");
     locationButton.style.backgroundColor = "#90ee90";
     locationButton.style.fontWeight = "bold";
 
-    // Add button to map
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+    // Add button to maps
+    addPanButtonToMapTop(map, locationButton);
 
     // Set click event
     locationButton.addEventListener("click", async () => {
@@ -331,10 +260,11 @@ function createPanButton(map) {
         const unkLocation = [69420, 69420];
 
         if (location[0]!==unkLocation[0] && location[1]!==unkLocation[1]) {
-            const latlngLiteral = {lat: location[0], lng: location[1]};
+            const lat = location[0];
+            const lng = location[1];
 
-            map.markers[0].setPosition(latlngLiteral); // Move the marker representing the user's last location to the current position
-            map.panTo(latlngLiteral);
+            setMarkerPosition(getMapMarkers(map)[0], lat, lng); // Move the marker representing the user's last location to the current position
+            panToMapLocation(map, lat, lng);
         }
     });
 }
