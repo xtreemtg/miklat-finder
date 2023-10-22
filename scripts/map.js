@@ -1,3 +1,5 @@
+MIKLATS = null
+
 // Custom errors
 class IllegalStateError extends Error {
     constructor(message) {
@@ -66,12 +68,31 @@ function addressComponentsToFull(address_components) {
     return components.sort((a,b) => a[1]>b[1]).map(cmpo => cmpo[0]).join(" ");
 }
 
+function fetchMiklats(){
+    if(MIKLATS === null) {
+        var url = "https://api.jsonbin.io/v3/b/6534ef9c12a5d376598ef61f"
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, false);
+        xhr.send()
+        if (xhr.status === 200) {
+            MIKLATS = JSON.parse(xhr.responseText)["record"]
+        } else {
+            alert("Error fetching miklats. Please try again later")
+            throw new Error('Request failed with status ' + xhr.status);
+        }
+    }
+}
+
 function getNearestMiklats(startCoords){
+    fetchMiklats()
     const sortedMiklats = MIKLATS.map(m => {
         const dist = haversineDistance(startCoords, [m.lat, m.long]);
         return { miklat: m, distance: Math.round(dist) };
     }).sort((a, b) => a.distance - b.distance);
     return sortedMiklats;
+
+
+
 }
 
 // Map functions
@@ -149,7 +170,8 @@ function getSvgPath(number) {
 // fromClick: if the location data comes from a click
 async function createMap(fromSearch = false, searchData=null, fromClick = false) {
     var currentLocation = (fromSearch || fromClick ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
-    var otherLocations = processResults(getNearestMiklats(currentLocation)); // Then get nearest miklats based on it
+    var closestMiklats = getNearestMiklats(currentLocation);
+    var otherLocations = processResults(closestMiklats); // Then get nearest miklats based on it
      if (!pointInGabash(currentLocation)){
         let msgEng = fromSearch ? "Search Addresses only in Givat Shmuel!" : "You are not in Givat Shmuel!"
          let msgHeb = fromSearch ? "חפש/י כתובות רק בגבעת שמואל!" : "את/ה לא נמצא/ת בגבעת שמואל!"
