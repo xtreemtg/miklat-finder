@@ -136,7 +136,6 @@ function processResults(data) {
         const miklat = data[i].miklat;
 
         const coords = [miklat["lat"], miklat["long"]];
-        const name = miklat["name"]
         const distanceTo = data[i].distance;
         const address = firstAvailable(miklat, "address");
         const size = miklat["size"]; // m^2
@@ -258,10 +257,6 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
 
         const numCell = row.insertCell(0);
         numCell.innerHTML = i;
-
-        // Removed as it's unecessary and too confusing'
-        /*const nameCell = row.insertCell(1);
-        nameCell.innerHTML = locations[i][2];*/
 
         const addressCell = row.insertCell(1);
         addressCell.innerHTML = locations[i][4];
