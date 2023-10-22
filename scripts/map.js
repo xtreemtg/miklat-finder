@@ -120,7 +120,6 @@ function processResults(data) {
 
             return langOrder[langCodeA] - langOrder[langCodeB];
         });
-        console.log(langFields);
 
         for (var i = 0; i < langFields.length; i++) {
             const currentData = dict[langFields[i]];
