@@ -1,5 +1,7 @@
  var HE_JSON = {
     "popup-nearest-miklat": "המקלט הכי קרוב בעוד XXX מטרים (המפה תפתח אחרי סגירת הפופאפ)",
+    "popup-outside-city-location": "את/ה לא נמצא/ת בגבעת שמואל!",
+    "popup-outside-city-search": "חפש/י כתובות רק בגבעת שמואל!",
 
     "geolocation-error-permission": "הרשאה נדחתה (וודא שלחיפוש מקלט יש גישה למיקום הפלאפון שלך)",
     "geolocation-error-position": "מיקום שלך לא זמין (וודא שמיקום מופעל בפלאפון שלך)",

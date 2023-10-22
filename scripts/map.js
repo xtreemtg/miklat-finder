@@ -109,16 +109,17 @@ function getSvgPath(number) {
 // fromSearch: if the location data comes from an address search
 // fromClick: if the location data comes from a click
 async function createMap(fromSearch = false, searchData=null, fromClick = false) {
-    var currentLocation = (fromSearch || fromClick ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
-    var otherLocations = processResults(getNearestMiklats(currentLocation)); // Then get nearest miklats based on it
-     if (!pointInGabash(currentLocation)){
-        let msgEng = fromSearch ? "Search Addresses only in Givat Shmuel!" : "You are not in Givat Shmuel!"
-         let msgHeb = fromSearch ? "חפש/י כתובות רק בגבעת שמואל!" : "את/ה לא נמצא/ת בגבעת שמואל!"
-         let msg = (localStorage.getItem("locale") === "he") ? msgHeb : msgEng
-        alert(msg)
-        return
+    const currentLocation = (fromSearch || fromClick ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
+    const otherLocations = processResults(getNearestMiklats(currentLocation)); // Then get nearest miklats based on it
+
+    // Prevent map creation if location is outside Givat Shmuel
+     if (!pointInGabash(currentLocation)) {
+        const msg = (fromSearch || fromClick) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
+        alert(msg);
+        return;
     }
-    var locations = [[currentLocation[0], currentLocation[1]]];
+
+    const locations = [[currentLocation[0], currentLocation[1]]];
     for (var i = 0; i < otherLocations.length && i < 13; i++) // 3 nearest miklats + 10 closest after those
         locations.push(otherLocations[i]);
 
