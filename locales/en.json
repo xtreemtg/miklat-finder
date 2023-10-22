@@ -1,5 +1,7 @@
  var EN_JSON = {
     "popup-nearest-miklat": "The nearest miklat is XXX meters away (map will open after closing this popup)",
+    "popup-outside-city-location": "You are not in Givat Shmuel!",
+    "popup-outside-city-search": "Search addresses only in Givat Shmuel!",
 
     "geolocation-error-permission": "Permission denied (make sure that Miklat Finder has access to your phone's location)",
     "geolocation-error-position": "Position unavailable (make sure that location is enabled on your phone)",
