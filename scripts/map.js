@@ -272,13 +272,13 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         addressCell.innerHTML = locations[i][4];
 
         const notesCell = row.insertCell(2);
-        notesCell.innerHTML = (locations[i][6] === null) ? "--" : locations[i][6];
+        notesCell.innerHTML = (locations[i][6] === null || locations[i][6].match(/^\s*$/) !== null) ? "--" : locations[i][6];
 
         const distanceCell = row.insertCell(3);
         distanceCell.innerHTML = locations[i][3];
 
         const sizeCell = row.insertCell(4);
-        sizeCell.innerHTML = locations[i][5];
+        sizeCell.innerHTML = (locations[i][5] === null) ? "--" : locations[i][5];
 
         // Align cells
         for (var j = 0; j < row.cells.length; j++)
