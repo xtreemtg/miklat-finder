@@ -59,7 +59,10 @@ function getNearestMiklats(startCoords) {
 
 }
 
-// Map functions
+function getAllPublicMiklats(filterFunc = null) {
+    fetchMiklats();
+    return MIKLATS.filter(miklat => miklat["isPublic"] === true).filter(miklat => (filterFunc === null) ? true : filterFunc(miklat));
+}
 
 // HTML5 geolocation. Latitude is first element, longitude is 2nd element
 const getCurrentLocation = () => new Promise((resolve) => {
@@ -193,6 +196,16 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     const locations = [[currentLocation[0], currentLocation[1]]];
     for (var i = 0; i < otherLocations.length && i < 13; i++) // 3 nearest miklats + 10 closest after those
         locations.push(otherLocations[i]);
+
+    // Add public miklats not already in locations
+    const remainingPublicMiklats = getAllPublicMiklats((miklat) => locations.findIndex(([lat, lng]) => (lat === miklat["lat"] && lng === miklat["long"])) < 0);
+
+    for (var i = 0; i < remainingPublicMiklats.length; i++) {
+        const result = getMiklatDataFromResult(remainingPublicMiklats[i]);
+
+        if (result !== null)
+            locations.push(result);
+    }
 
     // Create map
     const mapElement = document.getElementById("map");
