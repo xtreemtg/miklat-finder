@@ -46,10 +46,22 @@ function localizePage(locale="en") {
             console.log(`Error! Could not set locale value for ${localeElement.getAttribute("locale-value")}`);
         }
     }
+    const isRTL = localStorage.getItem("direction") === "rtl";
+
+    // Adjust legend icon positions
+    const legendIcons = document.getElementsByTagName("svg");
+
+    for (let i = 0; i < legendIcons.length; i++) {
+        const legendIcon = legendIcons[i];
+
+        if (isRTL)
+            legendIcon.setAttribute("viewBox", "-5 -1 24 24");
+        else
+            legendIcon.setAttribute("viewBox", "-20 -1 24 24");
+    }
 
     // Set ltr/rtl for all collapsible headers
     const collapsibleHeaders = document.getElementsByClassName("collapsible");
-    const isRTL = localStorage.getItem("direction") === "rtl";
 
     for (let i = 0; i < collapsibleHeaders.length; i++) {
         const header = collapsibleHeaders[i];

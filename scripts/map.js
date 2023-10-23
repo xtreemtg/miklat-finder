@@ -301,6 +301,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
             row.cells[j].style.textAlign = "center";
     }
     miklatTable.scrollIntoView(); // Scroll so table and map are in full view
+    document.getElementById("legend").style.display = "flex"; // Show miklat legend
     document.getElementById("click-map").style.display = "inline"; // Show message so user know they can click on map to find nearest miklats
 
     // Finally, list the nearest miklat distance in an alert
