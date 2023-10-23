@@ -87,65 +87,78 @@ const getCurrentLocation = () => new Promise((resolve) => {
     }
 });
 
+// Result processing
+
+// If field is missing in current language, search for next available field
+function firstAvailable(dict, field) {
+    const locale = localStorage.getItem("locale");
+    const keysWithField = Object.keys(dict).filter(key => key.includes(field));
+    var langOrder = {"Heb": 1, "": 2}; // Language order in which to try to get the miklat data
+
+    // Handle English/Hebrew in a simple fashion
+    if (locale === "en")
+        langOrder = {"": 1, "Heb": 2};
+
+    else if (locale !== "he") {
+
+        // Get field(s) that matches locale code
+        const langField = keysWithField.filter(key => key.replace(field, "").toLowerCase().includes(localStorage.getItem("locale"))); // Handle uppercase situations
+
+        if (langField.length > 0)
+            langOrder = {
+                [langField[0].replace(field, "")]: 0,
+                ...langOrder
+            };
+    }
+
+    // Sort by preferred order
+    const langFields = keysWithField.sort((a,b) => {
+        const langCodeA = a.replace(field, "");
+        const langCodeB = b.replace(field, "");
+
+        return langOrder[langCodeA] - langOrder[langCodeB];
+    });
+
+    for (var i = 0; i < langFields.length; i++) {
+        const currentData = dict[langFields[i]];
+
+        if (!(currentData === null || currentData.match(/^\s*$/) !== null))
+            return currentData;
+    }
+
+    return "";
+}
+
+function getMiklatDataFromResult(result) {
+    const coords = [result["lat"], result["long"]];
+    const distanceTo = result["distance"];
+    const address = firstAvailable(result, "address");
+    const size = result["size"]; // m^2
+    const comments = firstAvailable(result, "comments");
+    const isPublic = result["isPublic"];
+
+    // Skip empty addresses
+    if (address === "")
+        return null;
+
+    return coords.concat([name, distanceTo, address, size, comments, isPublic]);
+}
+
 
 function processResults(data) {
-    const locale = localStorage.getItem("locale");
     const results = [];
-
-    // If field is missing in current language, search for next available field
-    const firstAvailable = (dict, field) => {
-        const keysWithField = Object.keys(dict).filter(key => key.includes(field));
-        var langOrder = {"Heb": 1, "": 2}; // Language order in which to try to get the miklat data
-
-        // Handle English/Hebrew in a simple fashion
-        if (locale === "en")
-            langOrder = {"": 1, "Heb": 2};
-
-        else if (locale !== "he") {
-
-            // Get field(s) that matches locale code
-            const langField = keysWithField.filter(key => key.replace(field, "").toLowerCase().includes(localStorage.getItem("locale"))); // Handle uppercase situations
-
-            if (langField.length > 0)
-                langOrder = {
-                    [langField[0].replace(field, "")]: 0,
-                    ...langOrder
-                };
-        }
-
-        // Sort by preferred order
-        const langFields = keysWithField.sort((a,b) => {
-            const langCodeA = a.replace(field, "");
-            const langCodeB = b.replace(field, "");
-
-            return langOrder[langCodeA] - langOrder[langCodeB];
-        });
-
-        for (var i = 0; i < langFields.length; i++) {
-            const currentData = dict[langFields[i]];
-
-            if (!(currentData === null || currentData.match(/^\s*$/) !== null))
-                return currentData;
-        }
-
-        return "";
-    };
 
     for (var i = 0; i < data.length; i++) {
         const miklat = data[i].miklat;
+        miklat["distance"] = data[i].distance;
 
-        const coords = [miklat["lat"], miklat["long"]];
-        const distanceTo = data[i].distance;
-        const address = firstAvailable(miklat, "address");
-        const size = miklat["size"]; // m^2
-        const comments = firstAvailable(miklat, "comments");
-        const isPublic = miklat["isPublic"];
+        result = getMiklatDataFromResult(miklat);
 
-        // Skip empty addresses
-        if (address === "")
+        // Skip results with empty addresses
+        if (result === null)
             continue;
 
-        results.push(coords.concat([name, distanceTo, address, size, comments, isPublic]));
+        results.push(result);
     }
 
     return results;
