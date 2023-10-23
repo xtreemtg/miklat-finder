@@ -224,14 +224,14 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
 
     // Add markers
     for (var i = 0; i < locations.length; i++) {
-        var isPublic = (i == 0) ? false : locations[i][7]; // User location does not have a public value
+        const color = (i == 0) ? "blue" : ((locations[i][7]) ? "green" : "pink"); // Public miklat is green, private is pink
         const markerData = createMarkerData(map, locations[i][0], locations[i][1]);
 
         // User's current location has default marker, nearest 3 miklats have custom number marker, rest have default custom marker
         if (i>0 && i <= 3)
-            setMarkerDataIconField(markerData, svgMarkerData(getSvgPath(i), "blue", 1, 1));
+            setMarkerDataIconField(markerData, svgMarkerData(getSvgPath(i), color, 1, 1));
         else if (i >= 4)
-            setMarkerDataIconField(markerData, svgMarkerData("", color = (isPublic) ? "green" : "pink", 1, 1));
+            setMarkerDataIconField(markerData, svgMarkerData("", color, 0.6));
 
         createMapMarker(map, markerData);
 
@@ -274,9 +274,8 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     miklatTable.style.margin = "auto";
 
     // Remove any existing rows
-    for (var i = 1;i < miklatTable.rows.length;){
+    for (var i = 1;i < miklatTable.rows.length;)
         miklatTable.deleteRow(i);
-    }
 
     // Populate
     for (var i = 1; i < Math.min(3+1, locations.length); i++) { // Too many locations is too much for the user in a quick situation
