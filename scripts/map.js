@@ -139,12 +139,13 @@ function processResults(data) {
         const address = firstAvailable(miklat, "address");
         const size = miklat["size"]; // m^2
         const comments = firstAvailable(miklat, "comments");
+        const isPublic = miklat["isPublic"];
 
         // Skip empty addresses
         if (address === "")
             continue;
 
-        results.push(coords.concat([name, distanceTo, address, size, comments]));
+        results.push(coords.concat([name, distanceTo, address, size, comments, isPublic]));
     }
 
     return results;
