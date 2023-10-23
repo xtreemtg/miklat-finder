@@ -198,13 +198,14 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
 
     // Add markers
     for (var i = 0; i < locations.length; i++) {
+        var isPublic = (i == 0) ? false : locations[i][7]; // User location does not have a public value
         const markerData = createMarkerData(map, locations[i][0], locations[i][1]);
 
         // User's current location has default marker, nearest 3 miklats have custom number marker, rest have default custom marker
         if (i>0 && i <= 3)
-            setMarkerDataIconField(markerData, svgMarkerData(getSvgPath(i)));
+            setMarkerDataIconField(markerData, svgMarkerData(getSvgPath(i), "blue", 1, 1));
         else if (i >= 4)
-            setMarkerDataIconField(markerData, svgMarkerData());
+            setMarkerDataIconField(markerData, svgMarkerData("", color = (isPublic) ? "green" : "pink", 1, 1));
 
         createMapMarker(map, markerData);
 
