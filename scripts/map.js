@@ -259,7 +259,7 @@ async function createMap(searchData=null, notFromUser = false) {
     }
 
     // Add markers for miklat locations
-    for (var i = 0; i < locations.length; i++) {
+    for (let i = 0; i < locations.length; i++) {
         var path = getSVGPath((locations[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is shield, private is protruding
         const color = (locations[i][7]) ? "green" : "pink"; // Public miklat is green, private is pink
 
