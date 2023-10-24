@@ -13,12 +13,21 @@ function createMapObject(mapElement, lat, lng) {
         gestureHandling: "greedy" // Single finger gesture is best for when needing to quickly move the map around
     });
     map.markers = []; // Add new attribute, so we can keep track of the map's markers
+    map.userMarker = null; // Marker specifically geared towards user marker
 
     return map;
 }
 
 function getMapMarkers(map) {
     return map.markers;
+}
+
+function getUserLocationMarker(map) {
+    return map.userMarker;
+}
+
+function setUserLocationMarker(map, marker) {
+    map.userMarker = marker;
 }
 
 // Note: clickFunc needs to be asynchronous since createMap requires await
