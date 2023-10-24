@@ -7,6 +7,7 @@ function createMapObject(mapElement, lat, lng) {
     const map = new google.maps.Map(mapElement, {
         zoom: 17,
         center: createLatitudeLongitudeObject(lat, lng),
+        streetViewControl: false,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         mapTypeControl: false,    // Satellite view unneeded
         gestureHandling: "greedy" // Single finger gesture is best for when needing to quickly move the map around
