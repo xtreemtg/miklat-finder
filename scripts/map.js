@@ -333,8 +333,20 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     document.getElementById("legend").style.display = "flex"; // Show miklat legend
     document.getElementById("click-map").style.display = "inline"; // Show message so user know they can click on map to find nearest miklats
 
-    // Finally, list the nearest miklat distance in an alert
+    // List the nearest miklat distance in an alert
     alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[1][3]));
+
+    // Move user location marker to the user location (done last as otherwise the map disappears while the alert is still shown)
+    if (fromSearch || fromClick) {
+        const currentLocation = await getCurrentLocation();
+
+        if (locationIsKnown(currentLocation)) {
+            const lat = currentLocation[0];
+            const lng = currentLocation[1];
+
+            setMarkerPosition(getMapMarkers(map)[0], lat, lng); // Move the marker representing the user's last location to the current position
+        }
+    }
 }
 
 // Helper function for easily getting locale text
