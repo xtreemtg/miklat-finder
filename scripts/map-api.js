@@ -93,7 +93,14 @@ function setMarkerDataIconField(markerData, icon) {
     markerData.icon = icon;
 }
 
-function createMapMarker(map, markerData) {
+// zIndex negative value is below markers with zIndex of 0, positive value above markers with zIndex of 0. A value of 0 means that last created is on top
+function createMapMarker(map, lat, lng, iconPath, iconColor, zIndex = 0) {
+    const marker = new google.maps.Marker({position: createLatitudeLongitudeObject(lat, lng), map: map, icon: svgData(iconPath, iconColor), zIndex: zIndex});
+    getMapMarkers(map).push(marker);
+    return marker;
+}
+
+function createMapMarker2(map, markerData) {
     const marker = new google.maps.Marker(markerData);
     getMapMarkers(map).push(marker);
 }
