@@ -66,7 +66,7 @@ function getAllPublicMiklats(filterFunc = null) {
 
 // HTML5 geolocation. Latitude is first element, longitude is 2nd element
 const getCurrentLocation = () => new Promise((resolve) => {
-    var location = [69420, 69420];
+    var location = [69420, 69420]; // Unknown location
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -89,6 +89,11 @@ const getCurrentLocation = () => new Promise((resolve) => {
         resolve(location);
     }
 });
+
+function locationIsKnown(location) {
+    const unkLocation = [69420, 69420];
+    return location[0]!==unkLocation[0] && location[1]!==unkLocation[1];
+}
 
 // Result processing
 
@@ -363,9 +368,8 @@ function createPanButton(map) {
     // Set click event
     locationButton.addEventListener("click", async () => {
         const location = await getCurrentLocation();
-        const unkLocation = [69420, 69420];
 
-        if (location[0]!==unkLocation[0] && location[1]!==unkLocation[1]) {
+        if (locationIsKnown(location)) {
             const lat = location[0];
             const lng = location[1];
 
