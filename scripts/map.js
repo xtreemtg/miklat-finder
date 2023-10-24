@@ -291,10 +291,10 @@ async function createMap(searchData=null, notFromUser = false) {
 
     // Populate
     for (var i = 0; i < Math.min(3, locations.length); i++) { // Too many locations is too much for the user in a quick situation
-        const row = miklatTable.insertRow(i);
+        const row = miklatTable.insertRow(i+1);
 
         const numCell = row.insertCell(0);
-        numCell.innerHTML = i;
+        numCell.innerHTML = i+1;
 
         const addressCell = row.insertCell(1);
         addressCell.innerHTML = locations[i][4];
