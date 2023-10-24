@@ -41,6 +41,7 @@ li:not(:last-child) {
     float: left;
     display: inline-block;
     width: 90%;
+    font-size: 80%;
 }
 
 /* Collapsible styles*/
