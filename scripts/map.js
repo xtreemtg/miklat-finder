@@ -168,13 +168,34 @@ function processResults(data) {
 }
 
 // SVG icons that display a pin with 1, 2, or 3 (respectively)
-function getSvgPath(number) {
+/*
+ * SVG functions
+ */
+function getSVGPath(pathType) {
+    switch(pathType) {
+        // User location
+        case "daggerlike":
+            return "M 7 10 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.78 -3.375 L -2 9 L -2 6 L -5 3 L -3 0 H 3 L 5 3 L 2 6 V 9 z";
+
+        // Public miklat
+        case "square_top":
+            return "M 7 0 V 7 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.78 -3.375 v -7 z";
+
+        // Private miklat
+        case "protrusion_top":
+            return "M 7 3 L 10 5 V 8 L 7 10 V 10 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.78 -3.375 l -3 -2 L -10 5 L -7 3 H -5 L -3 0 H 3 L 5 3 z";
+
+        // Clicked/searched place
+        case "circle_top":
+            return "M 0 0 q 2.906 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z";
+    }
+}
+
+function getSVGNumber(number) {
     switch(number) {
-        case 1: return "M -3 4 l 2 0 L -1 10 L -1 10 H 1 V 2 H -1 V 2 z M 0 0 q 2.906 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z";
-
-        case 2: return "M -4 10 l 8 0 l 0 -2 l -6 -0 l 6 -3 L 4 4 L 2 2 H -2 L -4 4 l 6 0 L -4 8 z M 0 0 q 3 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z";
-
-        case 3: return "M -1.547 12 l 3.547 0 l 2 -2 l 0 -2 l -1 -1 l 1 -1 V 4 L 2 2 H -2 L -4 4 H 2 L -1 7 L 2 10 H -4 z M 0 0 q 2.906 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z";
+        case 1: return "M -3 4 l 2 0 L -1 10 L -1 10 H 1 V 2 H -1 V 2 z";
+        case 2: return "M -4 10 l 8 0 l 0 -2 l -6 -0 l 6 -3 L 4 4 L 2 2 H -2 L -4 4 l 6 0 L -4 8 z";
+        case 3: return "M -1.547 12 l 3.547 0 l 2 -2 l 0 -2 l -1 -1 l 1 -1 V 4 L 2 2 H -2 L -4 4 H 2 L -1 7 L 2 10 H -4 z";
     }
 }
 
@@ -224,14 +245,17 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
 
     // Add markers
     for (var i = 0; i < locations.length; i++) {
+        const pathName = (i == 0) ? "" : ((locations[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is green, private is pink
         const color = (i == 0) ? "blue" : ((locations[i][7]) ? "green" : "pink"); // Public miklat is green, private is pink
         const markerData = createMarkerData(map, locations[i][0], locations[i][1]);
 
         // User's current location has default marker, nearest 3 miklats have custom number marker, rest have default custom marker
-        if (i>0 && i <= 3)
-            setMarkerDataIconField(markerData, svgMarkerData(getSvgPath(i), color, 1, 1));
+        if (i == 0)
+            setMarkerDataIconField(markerData, svgMarkerData(getSVGPath("daggerlike"), "red", 1, 1));
+        else if (i>0 && i <= 3)
+            setMarkerDataIconField(markerData, svgMarkerData(getSVGPath(pathName) + " " + getSVGNumber(i), color, 1, 1));
         else if (i >= 4)
-            setMarkerDataIconField(markerData, svgMarkerData("", color, 0.6));
+            setMarkerDataIconField(markerData, svgMarkerData(getSVGPath(pathName), color, 1, 1));
 
         createMapMarker(map, markerData);
 
@@ -245,7 +269,7 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
         const markerData = createMarkerData(map, locations[0][0], locations[0][1]);
 
         // Use default marker for clicked location
-        setMarkerDataIconField(markerData, svgMarkerData("", "yellow", 1, 1));
+        setMarkerDataIconField(markerData, svgMarkerData(getSVGPath("circle_top"), "yellow", 1, 1));
 
         createMapMarker(map, markerData);
     }
