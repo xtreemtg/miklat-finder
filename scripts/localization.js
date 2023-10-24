@@ -83,4 +83,9 @@ function setToRTL() {
     localStorage.setItem("direction", "rtl");
 }
 
+// Helper function for easily getting locale text
+function getLocaleText(localeValue) {
+    return getLocaleJson(localStorage.getItem("locale"))[localeValue];
+}
+
 localizePage(localStorage.getItem("locale"));

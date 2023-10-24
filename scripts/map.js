@@ -356,11 +356,6 @@ async function createMap(searchData=null, notFromUser = false) {
     }
 }
 
-// Helper function for easily getting locale text
-function getLocaleText(localeValue) {
-    return getLocaleJson(localStorage.getItem("locale"))[localeValue];
-}
-
 // Location functions
 function getLocationErrorMessage(code) {
   switch (code) {
