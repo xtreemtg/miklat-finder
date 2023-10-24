@@ -22,7 +22,7 @@ function createPlacesAutcomplete() {
 
         const errMsg = document.getElementById("address-error");
         if (!badData) {
-            await createMap(true, coords);
+            await createMap(coords, true);
             errMsg.style.display = "none";
         } else
             errMsg.style.display = "inline";
@@ -207,14 +207,14 @@ function getSVGNumber(number) {
 // Creates the map with the 3 nearest miklats
 // fromSearch: if the location data comes from an address search
 // fromClick: if the location data comes from a click
-async function createMap(fromSearch = false, searchData=null, fromClick = false) {
-    const currentLocation = (fromSearch || fromClick ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
+async function createMap(searchData=null, notFromUser = false) {
+    const currentLocation = (notFromUser ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
     var closestMiklats = getNearestMiklats(currentLocation);
     var otherLocations = processResults(closestMiklats);// Then get nearest miklats based on it
 
     // Prevent map creation if location is outside Givat Shmuel
      if (!pointInGabash(currentLocation)) {
-        const msg = (fromSearch || fromClick) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
+        const msg = (notFromUser) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
         alert(msg);
         return;
     }
@@ -237,63 +237,45 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     const mapElement = document.getElementById("map");
     mapElement.style.display = "block";
 
-    const map = createMapObject(mapElement, locations[0][0], locations[0][1]);
+    const map = createMapObject(mapElement, currentLocation[0], currentLocation[1]);
 
     // Enable searching for nearby miklats where user clicks
     addMapClickEvent(map, async (mapsMouseEvent) => {
         const mouseCoords = getCoordinatesFromMapClick(mapsMouseEvent);
-        await createMap(false, mouseCoords, true);
+        await createMap(mouseCoords, true);
     });
 
-    // Create boundary to fit all miklats in
+    // Create boundary to fit all miklats in, set first boundary to initial location
     const bounds = createMapBoundaryObject();
+    extendMapBoundaryObject(bounds, currentLocation[0], currentLocation[1]);
 
-    // Add markers
-    for (var i = 0; i < locations.length; i++) {
-        const pathName = (i == 0) ? "" : ((locations[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is green, private is pink
-        const color = (i == 0) ? "blue" : ((locations[i][7]) ? "green" : "pink"); // Public miklat is green, private is pink
-        const markerData = createMarkerData(map, locations[i][0], locations[i][1]);
+    // Add initial location marker
+    if (notFromUser)
+        createMapMarker(map, currentLocation[0], currentLocation[1], getSVGPath("circle_top"), "yellow");
+    else {
+        const userMarker = createMapMarker(map, currentLocation[0], currentLocation[1], getSVGPath("daggerlike"), "red");
+        setUserLocationMarker(map, userMarker);
+    }
 
-        // User's current location has default marker, nearest 3 miklats have custom number marker, rest have default custom marker
-        if (i == 0)
-            setMarkerDataIconField(markerData, svgMarkerData(getSVGPath("daggerlike"), "red", 1, 1));
-        else if (i>0 && i <= 3)
-            setMarkerDataIconField(markerData, svgMarkerData(getSVGPath(pathName) + " " + getSVGNumber(i), color, 1, 1));
-        else if (i >= 4)
-            setMarkerDataIconField(markerData, svgMarkerData(getSVGPath(pathName), color, 1, 1));
+    // Add markers for miklat locations
+    for (var i = 1; i < locations.length; i++) {
+        var path = getSVGPath((locations[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is shield, private is protruding
+        const color = (locations[i][7]) ? "green" : "pink"; // Public miklat is green, private is pink
 
-        createMapMarker(map, markerData);
+        // Add number to icon if within nearest 3
+        if (i <= 3)
+            path += " " + getSVGNumber(i);
+
+        createMapMarker(map, locations[i][0], locations[i][1], path, color);
 
         // Extend boundary (only for nearest miklats)
         if (i <= 3)
             extendMapBoundaryObject(bounds, locations[i][0], locations[i][1]);
     }
 
-    // Add marker where user clicked/selected address
-    if (fromSearch || fromClick) {
-        const markerData = createMarkerData(map, locations[0][0], locations[0][1]);
-
-        // Use default marker for clicked location
-        setMarkerDataIconField(markerData, svgMarkerData(getSVGPath("circle_top"), "yellow", 1, 1));
-
-        createMapMarker(map, markerData);
-    }
-
     // Fit map to boundary
     fitMapToBoundary(map, bounds);
 
-    // Start tracking user's position
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition((pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-            setMarkerPosition(getMapMarkers(map)[0], latitude, longitude);
-
-        }, (error) => {});
-    }
-
-    // Create button to move to user's current location
-    createPanButton(map);
 
     /*
      * Populate miklat table
@@ -336,16 +318,31 @@ async function createMap(fromSearch = false, searchData=null, fromClick = false)
     // List the nearest miklat distance in an alert
     alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[1][3]));
 
-    // Move user location marker to the user location (done last as otherwise the map disappears while the alert is still shown)
-    if (fromSearch || fromClick) {
-        const currentLocation = await getCurrentLocation();
+    // Create user location marker at the user location (done after alert as otherwise the map disappears while the alert is still shown)
+    const permission = await navigator?.permissions?.query({name: 'geolocation'})
+    const notDenied = permission !== undefined && permission["state"] !== "denied";
 
-        if (locationIsKnown(currentLocation)) {
-            const lat = currentLocation[0];
-            const lng = currentLocation[1];
+    if (notFromUser && notDenied) {
+        const userLocation = await getCurrentLocation();
 
-            setMarkerPosition(getMapMarkers(map)[0], lat, lng); // Move the marker representing the user's last location to the current position
+        if (locationIsKnown(userLocation)) {
+            const userMarker = createMapMarker(map, userLocation[0], userLocation[1], getSVGPath("daggerlike"), "red", -999); // Make user location under all other markers
+            setUserLocationMarker(map, userMarker);
         }
+    }
+
+    if (navigator.geolocation && notDenied) {
+
+        // Start tracking user's position
+        navigator.geolocation.watchPosition((pos) => {
+            const latitude = pos.coords.latitude;
+            const longitude = pos.coords.longitude;
+            setMarkerPosition(getUserLocationMarker(map), latitude, longitude);
+
+        }, (error) => {});
+
+        // Create button to move to user's current location
+        createPanButton(map);
     }
 }
 
@@ -385,7 +382,7 @@ function createPanButton(map) {
             const lat = location[0];
             const lng = location[1];
 
-            setMarkerPosition(getMapMarkers(map)[0], lat, lng); // Move the marker representing the user's last location to the current position
+            setMarkerPosition(getUserLocationMarker(map), lat, lng); // Move the marker representing the user's last location to the current position
             panToMapLocation(map, lat, lng);
         }
     });
