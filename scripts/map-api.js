@@ -12,14 +12,10 @@ function createMapObject(mapElement, lat, lng) {
         mapTypeControl: false,    // Satellite view unneeded
         gestureHandling: "greedy" // Single finger gesture is best for when needing to quickly move the map around
     });
-    map.markers = []; // Add new attribute, so we can keep track of the map's markers
+    map.markers = []; // Add new property, so we can keep track of the map's markers
     map.userMarker = null; // Marker specifically geared towards user marker
 
     return map;
-}
-
-function getMapMarkers(map) {
-    return map.markers;
 }
 
 function getUserLocationMarker(map) {
@@ -65,44 +61,11 @@ function svgData(path, color) {
     };
 }
 
-function svgMarkerData(svgPath="", color="blue", opacity=0.6, weight=0) {
-    const svgMarker = {
-        defaultPath: "M 0 0 q 2.906 0 4.945 2.039 t 2.039 4.945 q 0 1.453 -0.727 3.328 t -1.758 3.516 t -2.039 3.07 t -1.711 2.273 l -0.75 0.797 q -0.281 -0.328 -0.75 -0.867 t -1.688 -2.156 t -2.133 -3.141 t -1.664 -3.445 t -0.75 -3.375 q 0 -2.906 2.039 -4.945 t 4.945 -2.039 z", // Default marker with nothing inside
-        path: "",
-        fillColor: color,
-        fillOpacity: opacity,
-        strokeWeight: weight,
-        rotation: 0,
-        scale: 2,
-        anchor: new google.maps.Point(0, 20),
-    };
-
-    if (svgPath.trim() === "")
-        svgMarker.path = svgMarker.defaultPath;
-    else
-        svgMarker.path = svgPath;
-
-    return svgMarker;
-}
-
-function createMarkerData(map, lat, lng) {
-    return {position: createLatitudeLongitudeObject(lat, lng), map: map}
-}
-
-function setMarkerDataIconField(markerData, icon) {
-    markerData.icon = icon;
-}
-
 // zIndex negative value is below markers with zIndex of 0, positive value above markers with zIndex of 0. A value of 0 means that last created is on top
 function createMapMarker(map, lat, lng, iconPath, iconColor, zIndex = 0) {
     const marker = new google.maps.Marker({position: createLatitudeLongitudeObject(lat, lng), map: map, icon: svgData(iconPath, iconColor), zIndex: zIndex});
-    getMapMarkers(map).push(marker);
+    map.markers.push(marker);
     return marker;
-}
-
-function createMapMarker2(map, markerData) {
-    const marker = new google.maps.Marker(markerData);
-    getMapMarkers(map).push(marker);
 }
 
 function setMarkerPosition(marker, lat, lng) {
