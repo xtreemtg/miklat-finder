@@ -72,6 +72,10 @@ function setMarkerPosition(marker, lat, lng) {
     marker.setPosition({lat: lat, lng: lng});
 }
 
+function addMarkerClickEvent(marker, clickEvent) {
+    marker.addListener("click", () => clickEvent());
+}
+
 // Boundary API functions
 function createMapBoundaryObject() {
     return new google.maps.LatLngBounds();
