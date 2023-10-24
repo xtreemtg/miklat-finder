@@ -209,8 +209,8 @@ function getSVGNumber(number) {
 // fromClick: if the location data comes from a click
 async function createMap(searchData=null, notFromUser = false) {
     const currentLocation = (notFromUser ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
-    var closestMiklats = getNearestMiklats(currentLocation);
-    var otherLocations = processResults(closestMiklats);// Then get nearest miklats based on it
+    const closestMiklats = getNearestMiklats(currentLocation);
+    const otherLocations = processResults(closestMiklats); // Then get nearest miklats based on it
 
     // Prevent map creation if location is outside Givat Shmuel
      if (!pointInGabash(currentLocation)) {
@@ -219,8 +219,9 @@ async function createMap(searchData=null, notFromUser = false) {
         return;
     }
 
-    const locations = [[currentLocation[0], currentLocation[1]]];
-    for (var i = 0; i < otherLocations.length && i < 13; i++) // 3 nearest miklats + 10 closest after those
+    // Add the 3 nearest miklats + 10 closest after those
+    const locations = [];
+    for (var i = 0; i < otherLocations.length && i < 13; i++)
         locations.push(otherLocations[i]);
 
     // Add public miklats not already in locations
@@ -258,18 +259,18 @@ async function createMap(searchData=null, notFromUser = false) {
     }
 
     // Add markers for miklat locations
-    for (var i = 1; i < locations.length; i++) {
+    for (var i = 0; i < locations.length; i++) {
         var path = getSVGPath((locations[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is shield, private is protruding
         const color = (locations[i][7]) ? "green" : "pink"; // Public miklat is green, private is pink
 
         // Add number to icon if within nearest 3
-        if (i <= 3)
-            path += " " + getSVGNumber(i);
+        if (i <= 2)
+            path += " " + getSVGNumber(i+1);
 
         createMapMarker(map, locations[i][0], locations[i][1], path, color);
 
         // Extend boundary (only for nearest miklats)
-        if (i <= 3)
+        if (i <= 2)
             extendMapBoundaryObject(bounds, locations[i][0], locations[i][1]);
     }
 
@@ -289,7 +290,7 @@ async function createMap(searchData=null, notFromUser = false) {
         miklatTable.deleteRow(i);
 
     // Populate
-    for (var i = 1; i < Math.min(3+1, locations.length); i++) { // Too many locations is too much for the user in a quick situation
+    for (var i = 0; i < Math.min(3, locations.length); i++) { // Too many locations is too much for the user in a quick situation
         const row = miklatTable.insertRow(i);
 
         const numCell = row.insertCell(0);
@@ -316,7 +317,7 @@ async function createMap(searchData=null, notFromUser = false) {
     document.getElementById("click-map").style.display = "inline"; // Show message so user know they can click on map to find nearest miklats
 
     // List the nearest miklat distance in an alert
-    alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[1][3]));
+    alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[0][3]));
 
     // Create user location marker at the user location (done after alert as otherwise the map disappears while the alert is still shown)
     const permission = await navigator?.permissions?.query({name: 'geolocation'})
