@@ -267,7 +267,16 @@ async function createMap(searchData=null, notFromUser = false) {
         if (i <= 2)
             path += " " + getSVGNumber(i+1);
 
-        createMapMarker(map, locations[i][0], locations[i][1], path, color);
+        const marker = createMapMarker(map, locations[i][0], locations[i][1], path, color);
+
+        // Add option to get direction to miklat in Google Maps itself
+        addMarkerClickEvent(marker, () => {
+            const start = currentLocation.join(",");
+            const end = locations[i].slice(0,2).join(",");
+
+            if (confirm(getLocaleText("popup-direction-to-miklat")))
+                window.open(`https://www.google.com/maps/dir/?api=1&origin=${start}&destination=${end}`);
+        });
 
         // Extend boundary (only for nearest miklats)
         if (i <= 2)
