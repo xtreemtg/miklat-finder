@@ -21,8 +21,10 @@
     "miklat-size": "Size",
     "pan-to-location": "Pan to current location",
 
+    "your-location": "Your location",
     "public-miklat": "Public miklat",
     "private-miklat": "Private miklat",
+    "click-search-location": "Clicked/searched location",
     "click-map": "Click on the map to see the nearest protected space at that spot!",
 
     "cant-reach-start": "If you can't reach a mamad/miklat in time and are...",
