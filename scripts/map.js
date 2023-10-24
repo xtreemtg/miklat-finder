@@ -329,9 +329,11 @@ async function createMap(searchData=null, notFromUser = false) {
     alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[0][3]));
 
     // Create user location marker at the user location (done after alert as otherwise the map disappears while the alert is still shown)
-    const permission = await navigator?.permissions?.query({name: 'geolocation'})
-    const notDenied = permission !== undefined && permission["state"] !== "denied";
+    const permission = navigator?.permissions?.query({name: 'geolocation'});
+    const notDenied = permission !== undefined && permission !== null && permission["state"] !== "denied";
 
+    /* Developer note: querying geolocation to determine if it is denied usually doesn't work for some reason unless all locations are denied. If you know of a better way,
+        please let us know.*/
     if (notFromUser && notDenied) {
         const userLocation = await getCurrentLocation();
 
