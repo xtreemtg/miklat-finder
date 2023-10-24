@@ -15,9 +15,10 @@
     <script src="locales/he.json"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script>
+        const langsAvailable = ["en",  "he"];
         const userLang = navigator.language || navigator.userLanguage;
         const nnDefined = userLang !== undefined && userLang !== null; // Protect against errors
-        const lang = (nnDefined && ["en", "he"].includes(userLang.split("-")[0])) ? userLang.split("-")[0] : "en";
+        const lang = (nnDefined && langsAvailable.includes(userLang.split("-")[0])) ? userLang.split("-")[0] : "en";
 
         // Set locale+direction if it doesn't yet exist
         const direction = {en: "ltr", he: "rtl"};
