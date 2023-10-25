@@ -25,7 +25,7 @@ function createPlacesAutcomplete() {
             await createMap(coords, true);
             errMsg.style.display = "none";
         } else
-            errMsg.style.display = "inline";
+            errMsg.style.display = "block";
     });
 }
 
