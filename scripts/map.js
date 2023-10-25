@@ -47,7 +47,7 @@ function fetchMiklats() {
     }
 }
 
-function getNearestMiklats(startCoords) {
+function miklatsSortedByDistance(startCoords) {
     fetchMiklats();
 
     const sortedMiklats = MIKLATS.map(m => {
@@ -212,7 +212,7 @@ async function createMap(searchData = null, notFromUser = false) {
     if (!notFromUser && !locationIsKnown(currentLocation))
         return;
 
-    const closestMiklats = getNearestMiklats(currentLocation);
+    const closestMiklats = miklatsSortedByDistance(currentLocation);
     const otherLocations = processResults(closestMiklats); // Then get nearest miklats based on it
 
     // Prevent map creation if location is outside your city area
