@@ -85,7 +85,7 @@ const getCurrentLocation = () => new Promise((resolve) => {
             }
         );
     } else {
-        alert("Geolocation is not supported by your browser");
+        alert(getLocaleText("popup-geolocation-unsupported"));
         resolve(location);
     }
 });

@@ -3,6 +3,7 @@
     "popup-outside-city-location": "You are not in Givat Shmuel!",
     "popup-outside-city-search": "Search addresses only in Givat Shmuel!",
     "popup-direction-to-miklat": "Open directions to protected space in Google Maps?",
+    "popup-geolocation-unsupported": "Geolocation is not supported by your browser",
 
     "geolocation-error-permission": "Permission denied (make sure that Miklat Finder has access to your phone's location)",
     "geolocation-error-position": "Position unavailable (make sure that location is enabled on your phone)",

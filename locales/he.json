@@ -3,6 +3,7 @@
     "popup-outside-city-location": "את/ה לא נמצא/ת בגבעת שמואל!",
     "popup-outside-city-search": "חפש/י כתובות רק בגבעת שמואל!",
     "popup-direction-to-miklat": "לפתוח בגוגל מפות דרכי הגעה למקלט?",
+    "popup-geolocation-unsupported": "דפדפן שלך לא תומך במיקום פלאפון",
 
     "geolocation-error-permission": "הרשאה נדחתה (וודא שלחיפוש מקלט יש גישה למיקום הפלאפון שלך)",
     "geolocation-error-position": "מיקום שלך לא זמין (וודא שמיקום מופעל בפלאפון שלך)",
