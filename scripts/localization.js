@@ -22,9 +22,10 @@ function localizePage(locale="en") {
 
     for (let i = 0; i < localeElements.length; i++) {
         const localeElement = localeElements[i];
-        const localeValue = locale_json[localeElement.getAttribute("locale-value")];
 
         try {
+            const localeValue = locale_json[localeElement.getAttribute("locale-value")];
+
             if (localeElement.tagName == "INPUT")
                 localeElement.setAttribute("placeholder", localeValue);
             else {
