@@ -207,6 +207,11 @@ function getSVGNumber(number) {
 // notFromUser: if the location data comes from an address search or clicking on the map
 async function createMap(searchData = null, notFromUser = false) {
     const currentLocation = (notFromUser ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
+
+    // If you need the user's location and do not have it, do not bother doing anything more
+    if (!notFromUser && !locationIsKnown(currentLocation))
+        return;
+
     const closestMiklats = getNearestMiklats(currentLocation);
     const otherLocations = processResults(closestMiklats); // Then get nearest miklats based on it
 
