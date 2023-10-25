@@ -278,7 +278,7 @@ async function createMap(searchData = null, notFromUser = false) {
             const end = miklats[i].slice(0,2).join(",");
 
             if (confirm(getLocaleText("popup-direction-to-miklat")))
-                window.open(`https://www.google.com/maps/dir/?api=1&origin=${start}&destination=${end}`);
+                window.open(`https://www.google.com/maps/dir/?api=1&origin=${start}&destination=${end}&travelmode=walking`);
         });
 
         // Extend boundary (only for nearest miklats)
