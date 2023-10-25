@@ -1,4 +1,5 @@
-GABASH_COORDS =[
+// Boundaries for city the Miklat Finder searches in
+CITY_COORDS = [
     [32.072783, 34.843219],
     [32.072795, 34.843239],
     [32.074060, 34.843665],
@@ -20,9 +21,9 @@ GABASH_COORDS =[
     [32.074728, 34.846986],
     [32.072428, 34.844222],
     [32.072783, 34.843219]
-]
+];
 
-
+// Calculates the distance between two locations
 function haversineDistance(coord1, coord2) {
     // Convert latitude and longitude from degrees to radians
     const [lat1, lon1] = coord1.map(coord => coord * (Math.PI / 180));
@@ -45,10 +46,10 @@ function haversineDistance(coord1, coord2) {
 
 function pointInGabash(point) {
       let i, j, c = false;
-      const n = GABASH_COORDS.length;
+      const n = CITY_COORDS.length;
       for (i = 0, j = n - 1; i < n; j = i++) {
-          if (((GABASH_COORDS[i][1] > point[1]) !== (GABASH_COORDS[j][1] > point[1])) &&
-              (point[0] < (GABASH_COORDS[j][0] - GABASH_COORDS[i][0]) * (point[1] - GABASH_COORDS[i][1]) / (GABASH_COORDS[j][1] - GABASH_COORDS[i][1]) + GABASH_COORDS[i][0])) {
+          if (((CITY_COORDS[i][1] > point[1]) !== (CITY_COORDS[j][1] > point[1])) &&
+              (point[0] < (CITY_COORDS[j][0] - CITY_COORDS[i][0]) * (point[1] - CITY_COORDS[i][1]) / (CITY_COORDS[j][1] - CITY_COORDS[i][1]) + CITY_COORDS[i][0])) {
               c = !c;
           }
       }
