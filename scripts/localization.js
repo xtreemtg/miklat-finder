@@ -85,7 +85,22 @@ function setToRTL() {
 
 // Helper function for easily getting locale text
 function getLocaleText(localeValue) {
-    return getLocaleJson(localStorage.getItem("locale"))[localeValue];
+    try {
+        const value = getLocaleJson(localStorage.getItem("locale"))[localeValue];
+
+        if (value === undefined)
+            throw new Error(`The locale value '${localeValue}' is missing from the locale json (locale is presently '${localStorage.getItem("locale")}')`);
+
+        return value;
+
+    } catch (error) {
+        console.log(error);
+        const msg = (localStorage.getItem("locale") === "he") ? `(לא היה ניתן למצוא את ערך המיקומי עבור '${localeValue}')` : `(could not get the locale value for '${localeValue}')`;
+        alert(msg);
+
+        return (localStorage.getItem("locale") === "he") ? "(חסר טקסט)" : "(missing text)";
+    }
 }
 
+// Runs right after page load
 localizePage(localStorage.getItem("locale"));
