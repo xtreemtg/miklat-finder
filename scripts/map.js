@@ -212,10 +212,10 @@ async function createMap(searchData = null, notFromUser = false) {
     if (!notFromUser && !locationIsKnown(currentLocation))
         return;
 
-    const closestMiklats = miklatsSortedByDistance(currentLocation);
-    const otherLocations = processResults(closestMiklats); // Then get nearest miklats based on it
+    const sortedMiklats = miklatsSortedByDistance(currentLocation); // Get miklats sorted by closest distance to location requested
+    const processedMiklats = processResults(sortedMiklats);
 
-    // Prevent map creation if location is outside your city area
+    // Prevent map creation if location requested is outside your city area
      if (!pointInGabash(currentLocation)) {
         const msg = (notFromUser) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
         alert(msg);
@@ -223,18 +223,18 @@ async function createMap(searchData = null, notFromUser = false) {
     }
 
     // Add the 3 nearest miklats + 10 closest after those
-    const locations = [];
-    for (var i = 0; i < otherLocations.length && i < 13; i++)
-        locations.push(otherLocations[i]);
+    const miklats = [];
+    for (var i = 0; i < processedMiklats.length && i < 13; i++)
+        miklats.push(processedMiklats[i]);
 
-    // Add public miklats not already in locations
-    const remainingPublicMiklats = getAllPublicMiklats((miklat) => locations.findIndex(([lat, lng]) => (lat === miklat["lat"] && lng === miklat["long"])) < 0);
+    // Add public miklats not already in miklats
+    const remainingPublicMiklats = getAllPublicMiklats((miklat) => miklats.findIndex(([lat, lng]) => (lat === miklat["lat"] && lng === miklat["long"])) < 0);
 
     for (var i = 0; i < remainingPublicMiklats.length; i++) {
         const result = getMiklatDataFromResult(remainingPublicMiklats[i]);
 
         if (result !== null)
-            locations.push(result);
+            miklats.push(result);
     }
 
     // Create map
@@ -262,20 +262,20 @@ async function createMap(searchData = null, notFromUser = false) {
     }
 
     // Add markers for miklat locations
-    for (let i = 0; i < locations.length; i++) {
-        var path = getSVGPath((locations[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is shield, private is protruding
-        const color = (locations[i][7]) ? "green" : "pink"; // Public miklat is green, private is pink
+    for (let i = 0; i < miklats.length; i++) {
+        var path = getSVGPath((miklats[i][7]) ? "square_top" : "protrusion_top"); // Public miklat is shield, private is protruding
+        const color = (miklats[i][7]) ? "green" : "pink"; // Public miklat is green, private is pink
 
         // Add number to icon if within nearest 3
         if (i <= 2)
             path += " " + getSVGNumber(i+1);
 
-        const marker = createMapMarker(map, locations[i][0], locations[i][1], path, color);
+        const marker = createMapMarker(map, miklats[i][0], miklats[i][1], path, color);
 
         // Add option to get direction to miklat in Google Maps itself
         addMarkerClickEvent(marker, () => {
             const start = currentLocation.join(",");
-            const end = locations[i].slice(0,2).join(",");
+            const end = miklats[i].slice(0,2).join(",");
 
             if (confirm(getLocaleText("popup-direction-to-miklat")))
                 window.open(`https://www.google.com/maps/dir/?api=1&origin=${start}&destination=${end}`);
@@ -283,7 +283,7 @@ async function createMap(searchData = null, notFromUser = false) {
 
         // Extend boundary (only for nearest miklats)
         if (i <= 2)
-            extendMapBoundaryObject(bounds, locations[i][0], locations[i][1]);
+            extendMapBoundaryObject(bounds, miklats[i][0], miklats[i][1]);
     }
 
     // Fit map to boundary
@@ -302,23 +302,23 @@ async function createMap(searchData = null, notFromUser = false) {
         miklatTable.deleteRow(i);
 
     // Populate
-    for (var i = 0; i < Math.min(3, locations.length); i++) { // Too many locations is too much for the user in a quick situation
+    for (var i = 0; i < Math.min(3, miklats.length); i++) { // Too many miklats is too much for the user in a quick situation
         const row = miklatTable.insertRow(i+1);
 
         const numCell = row.insertCell(0);
         numCell.innerHTML = i+1;
 
         const addressCell = row.insertCell(1);
-        addressCell.innerHTML = locations[i][4];
+        addressCell.innerHTML = miklats[i][4];
 
         const notesCell = row.insertCell(2);
-        notesCell.innerHTML = (locations[i][6] === null || locations[i][6].match(/^\s*$/) !== null) ? "--" : locations[i][6];
+        notesCell.innerHTML = (miklats[i][6] === null || miklats[i][6].match(/^\s*$/) !== null) ? "--" : miklats[i][6];
 
         const distanceCell = row.insertCell(3);
-        distanceCell.innerHTML = locations[i][3];
+        distanceCell.innerHTML = miklats[i][3];
 
         const sizeCell = row.insertCell(4);
-        sizeCell.innerHTML = (locations[i][5] === null) ? "--" : locations[i][5];
+        sizeCell.innerHTML = (miklats[i][5] === null) ? "--" : miklats[i][5];
 
         // Align cells
         for (var j = 0; j < row.cells.length; j++)
@@ -329,7 +329,7 @@ async function createMap(searchData = null, notFromUser = false) {
     document.getElementById("click-map").style.display = "inline"; // Show message so user know they can click on map to find nearest miklats
 
     // List the nearest miklat distance in an alert
-    alert(getLocaleText("popup-nearest-miklat").replace("XXX", locations[0][3]));
+    alert(getLocaleText("popup-nearest-miklat").replace("XXX", miklats[0][3]));
 
     // Create user location marker at the user location (done after alert as otherwise the map disappears while the alert is still shown)
     const permission = navigator?.permissions?.query({name: 'geolocation'});
