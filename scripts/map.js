@@ -331,33 +331,40 @@ async function createMap(searchData = null, notFromUser = false) {
     // List the nearest miklat distance in an alert
     alert(getLocaleText("popup-nearest-miklat").replace("XXX", miklats[0][3]));
 
-    // Create user location marker at the user location (done after alert as otherwise the map disappears while the alert is still shown)
+    /*
+     * User location tracking
+     */
     const permission = await navigator?.permissions?.query({name: 'geolocation'});
-    const notDenied = permission !== undefined && permission !== null && permission["state"] !== "denied";
+    const canTrack = navigator.geolocation && permission !== undefined && permission !== null && permission["state"] !== "denied"; // Need geolocation available+permission
 
-    /* Developer note: querying geolocation to determine if it is denied usually doesn't work for some reason unless all locations are denied. If you know of a better way,
-        please let us know.*/
-    if (notFromUser && notDenied) {
-        const userLocation = await getCurrentLocation();
+    /* Developer note: querying geolocation to determine if it is denied usually doesn't work for some reason unless location access is denied via settings. If you know of
+        better way, please let us know.*/
+    if (canTrack) {
+        var locationKnown = !notFromUser; // We have already location if big red button was clicked
 
-        if (locationIsKnown(userLocation)) {
-            const userMarker = createMapMarker(map, userLocation[0], userLocation[1], getSVGPath("daggerlike"), "red", -999); // Make user location under all other markers
-            setUserLocationMarker(map, userMarker);
+        // In the case that miklats was searched via click/address, now set user location marker (done after alert otherwise the map disappears while the alert is still shown)
+        if (notFromUser) {
+            const userLocation = await getCurrentLocation();
+
+            if (locationIsKnown(userLocation)) {
+                const userMarker = createMapMarker(map, userLocation[0], userLocation[1], getSVGPath("daggerlike"), "red", -999); // Make user location under all other markers
+                setUserLocationMarker(map, userMarker);
+                locationKnown = true;
+            }
         }
-    }
 
-    if (navigator.geolocation && notDenied) {
+        // Attempt to track the user's position
+        if (locationKnown) {
+            navigator.geolocation.watchPosition((pos) => {
+                const latitude = pos.coords.latitude;
+                const longitude = pos.coords.longitude;
+                setMarkerPosition(getUserLocationMarker(map), latitude, longitude);
 
-        // Start tracking user's position
-        navigator.geolocation.watchPosition((pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-            setMarkerPosition(getUserLocationMarker(map), latitude, longitude);
+            }, (error) => {});
 
-        }, (error) => {});
-
-        // Create button to move to user's current location
-        createPanButton(map);
+            // Create button to move to user's current location
+            createPanButton(map);
+        }
     }
 }
 
