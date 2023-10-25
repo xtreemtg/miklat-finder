@@ -216,7 +216,7 @@ async function createMap(searchData = null, notFromUser = false) {
     const processedMiklats = processResults(sortedMiklats);
 
     // Prevent map creation if location requested is outside your city area
-     if (!pointInGabash(currentLocation)) {
+     if (!pointInCity(currentLocation)) {
         const msg = (notFromUser) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
         alert(msg);
         return;

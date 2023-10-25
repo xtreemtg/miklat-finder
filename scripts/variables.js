@@ -44,7 +44,7 @@ function haversineDistance(coord1, coord2) {
     return distance;
 }
 
-function pointInGabash(point) {
+function pointInCity(point) {
       let i, j, c = false;
       const n = CITY_COORDS.length;
       for (i = 0, j = n - 1; i < n; j = i++) {
