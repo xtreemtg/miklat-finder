@@ -86,6 +86,7 @@ function extendMapBoundaryObject(boundary, lat, lng) {
 }
 
 // Places Autocomplete API functions
+// Note: Autcomplete doesn't allow filtering results based on city
 function createAutocompleteObject(inputElement) {
     return new google.maps.places.Autocomplete(inputElement, {
         componentRestrictions: { country: "il" },

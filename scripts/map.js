@@ -101,7 +101,7 @@ function locationIsKnown(location) {
 function firstAvailable(dict, field) {
     const locale = localStorage.getItem("locale");
     const keysWithField = Object.keys(dict).filter(key => key.includes(field));
-    var langOrder = {"Heb": 1, "": 2}; // Language order in which to try to get the miklat data
+    var langOrder = {"Heb": 1, "": 2}; // Language order in which to try to get the miklat data. Has 'Heb' since our database's fields' hebrew key names end with 'Heb'
 
     // Handle English/Hebrew in a simple fashion
     if (locale === "en")
@@ -110,7 +110,7 @@ function firstAvailable(dict, field) {
     else if (locale !== "he") {
 
         // Get field(s) that matches locale code
-        const langField = keysWithField.filter(key => key.replace(field, "").toLowerCase().includes(localStorage.getItem("locale"))); // Handle uppercase situations
+        const langField = keysWithField.filter(key => key.replace(field, "").toLowerCase().includes(localStorage.getItem("locale"))); // Handle uppercase situation+extra characters
 
         if (langField.length > 0)
             langOrder = {
@@ -119,7 +119,7 @@ function firstAvailable(dict, field) {
             };
     }
 
-    // Sort by preferred order
+    // Sort by preferred order - CURRENT LOCALE, then Hebrew, then English
     const langFields = keysWithField.sort((a,b) => {
         const langCodeA = a.replace(field, "");
         const langCodeB = b.replace(field, "");
@@ -172,7 +172,6 @@ function processResults(data) {
     return results;
 }
 
-// SVG icons that display a pin with 1, 2, or 3 (respectively)
 /*
  * SVG functions
  */
@@ -205,14 +204,13 @@ function getSVGNumber(number) {
 }
 
 // Creates the map with the 3 nearest miklats
-// fromSearch: if the location data comes from an address search
-// fromClick: if the location data comes from a click
-async function createMap(searchData=null, notFromUser = false) {
+// notFromUser: if the location data comes from an address search or clicking on the map
+async function createMap(searchData = null, notFromUser = false) {
     const currentLocation = (notFromUser ? searchData : (await getCurrentLocation())).slice(0,2); // First get the current location
     const closestMiklats = getNearestMiklats(currentLocation);
     const otherLocations = processResults(closestMiklats); // Then get nearest miklats based on it
 
-    // Prevent map creation if location is outside Givat Shmuel
+    // Prevent map creation if location is outside your city area
      if (!pointInGabash(currentLocation)) {
         const msg = (notFromUser) ? getLocaleText("popup-outside-city-search") : getLocaleText("popup-outside-city-location");
         alert(msg);
@@ -358,7 +356,7 @@ async function createMap(searchData=null, notFromUser = false) {
     }
 }
 
-// Location functions
+// Geolocation error messages
 function getLocationErrorMessage(code) {
   switch (code) {
     case 1:
@@ -370,7 +368,7 @@ function getLocationErrorMessage(code) {
   }
 }
 
-// Moves to user's location when clicked
+// Moves map to user's location when clicked
 function createPanButton(map) {
     const locationButton = document.createElement("button");
 
@@ -378,7 +376,7 @@ function createPanButton(map) {
     locationButton.style.backgroundColor = "#90ee90";
     locationButton.style.fontWeight = "bold";
 
-    // Add button to maps
+    // Add button to map
     addPanButtonToMapTop(map, locationButton);
 
     // Set click event
@@ -390,7 +388,7 @@ function createPanButton(map) {
             const lng = location[1];
 
             setMarkerPosition(getUserLocationMarker(map), lat, lng); // Move the marker representing the user's last location to the current position
-            panToMapLocation(map, lat, lng);
+            panToMapLocation(map, lat, lng); // Smooth transition if map center is close to user
         }
     });
 }
