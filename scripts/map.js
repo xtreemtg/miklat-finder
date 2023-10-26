@@ -270,7 +270,7 @@ async function createMap(searchData = null, notFromUser = false) {
         if (i <= 2)
             path += " " + getSVGNumber(i+1);
 
-        const marker = createMapMarker(map, miklats[i][0], miklats[i][1], path, color);
+        const marker = createMapMarker(map, miklats[i][0], miklats[i][1], path, color, (i<=2) ? 3-i : 0); // Nearest miklats are always on top
 
         // Add option to get direction to miklat in Google Maps itself
         addMarkerClickEvent(marker, () => {

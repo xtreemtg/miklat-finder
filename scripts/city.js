@@ -1,4 +1,4 @@
-// Boundaries for city the Miklat Finder searches in
+// Boundaries for the city the Miklat Finder searches in
 CITY_COORDS = [
     [32.072783, 34.843219],
     [32.072795, 34.843239],
