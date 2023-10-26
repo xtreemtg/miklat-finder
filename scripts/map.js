@@ -325,7 +325,7 @@ async function createMap(searchData = null, notFromUser = false) {
         notesCell.innerHTML = (miklats[i][6] === null || miklats[i][6].match(/^\s*$/) !== null) ? "--" : miklats[i][6];
 
         const timeCell = row.insertCell(3);
-        timeCell.innerHTML = (miklats[i][8] === null) ? "---" : miklats[i][8];
+        timeCell.innerHTML = (miklats[i][8] === null) ? "---" : miklats[i][8] + " " + getLocaleText("miklat-time-sec");
 
         const distanceCell = row.insertCell(4);
         distanceCell.innerHTML = miklats[i][3];
