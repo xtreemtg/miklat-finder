@@ -19,6 +19,7 @@
     "miklat-name": "Miklat Name",
     "miklat-address": "Address",
     "miklat-notes": "Notes",
+    "miklat-time": "Est. walk time (seconds)",
     "miklat-distance": "Distance away",
     "miklat-size": "Size",
     "pan-to-location": "Pan to current location",
