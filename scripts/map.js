@@ -174,6 +174,7 @@ function firstAvailable(dict, field) {
 function getMiklatDataFromResult(result) {
     const coords = [result["lat"], result["long"]];
     const distanceTo = result["distance"];
+    const estWalk = result["duration"];
     const address = firstAvailable(result, "address");
     const size = result["size"]; // m^2
     const comments = firstAvailable(result, "comments");
@@ -183,7 +184,7 @@ function getMiklatDataFromResult(result) {
     if (address === "")
         return null;
 
-    return coords.concat([name, distanceTo, address, size, comments, isPublic]);
+    return coords.concat([name, distanceTo, address, size, comments, isPublic, estWalk]);
 }
 
 
@@ -348,10 +349,13 @@ async function createMap(searchData = null, notFromUser = false) {
         const notesCell = row.insertCell(2);
         notesCell.innerHTML = (miklats[i][6] === null || miklats[i][6].match(/^\s*$/) !== null) ? "--" : miklats[i][6];
 
-        const distanceCell = row.insertCell(3);
+        const timeCell = row.insertCell(3);
+        timeCell.innerHTML = (miklats[i][8] === null) ? "---" : miklats[i][8];
+
+        const distanceCell = row.insertCell(4);
         distanceCell.innerHTML = miklats[i][3];
 
-        const sizeCell = row.insertCell(4);
+        const sizeCell = row.insertCell(5);
         sizeCell.innerHTML = (miklats[i][5] === null) ? "--" : miklats[i][5];
 
         // Align cells
