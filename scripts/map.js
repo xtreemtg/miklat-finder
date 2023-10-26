@@ -48,36 +48,44 @@ function fetchMiklats() {
 }
 
 const distanceMatrixAPI = (startCoords) => new Promise((resolve) => {
-    var dests = MIKLATS.map(m => new google.maps.LatLng(m.lat, m.long))
-    var origin = new google.maps.LatLng(startCoords[0], startCoords[1])
+    var origin = new google.maps.LatLng(startCoords[0], startCoords[1]);
+    var dests = MIKLATS.map(m => new google.maps.LatLng(m.lat, m.long));
     var service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix(
-      {
+
+    service.getDistanceMatrix({
         origins: [origin],
         destinations: dests,
         travelMode: 'WALKING',
         unitSystem: google.maps.UnitSystem.METRIC,
-      }).then(res=>resolve(res)).catch(err=>resolve(err));
+    }).then(res => resolve(res)).catch(err => resolve(err));
 });
 
 async function miklatsSortedByDistance(startCoords) {
     fetchMiklats();
     var sortedMiklats;
     let distanceMatrixResults = await distanceMatrixAPI(startCoords);
-    if(distanceMatrixResults != undefined && "rows" in distanceMatrixResults){
-        let elements = distanceMatrixResults["rows"][0]["elements"]
-        console.assert(MIKLATS.length === elements.length)
-        let arr = []
-        for(let i=0;i<elements.length;i++){
-            let obj = {miklat:MIKLATS[i], distance:elements[i].distance.value, duration:elements[i].duration.value}
-            arr.push(obj)
+
+    // Attempt to use Google Maps Distance API to sort miklats based on walking time
+    if (distanceMatrixResults !== undefined && "rows" in distanceMatrixResults) {
+        let elements = distanceMatrixResults["rows"][0]["elements"];
+        console.assert(MIKLATS.length === elements.length);
+
+        let arr = [];
+        for (let i = 0; i < elements.length; i++) {
+            let obj = {
+                miklat: MIKLATS[i],
+                distance: elements[i].distance.value,
+                duration: Math.ceil(elements[i].duration.value/10)*10 // Ceil to nearest ten
+            };
+            arr.push(obj);
         }
         sortedMiklats = arr.sort((a, b) => a.distance - b.distance);
-    }
-    else{
+
+    // If that fails, use local function to sort by distance to miklat
+    } else {
         sortedMiklats = MIKLATS.map(m => {
             const dist = haversineDistance(startCoords, [m.lat, m.long]);
-            return {miklat: m, distance: Math.round(dist), duration:null};
+            return {miklat: m, distance: Math.round(dist), duration: null};
         }).sort((a, b) => a.distance - b.distance);
     }
 
