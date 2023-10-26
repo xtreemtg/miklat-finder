@@ -186,9 +186,6 @@ function processResults(data) {
         const miklat = data[i].miklat;
         miklat["distance"] = data[i].distance;
         miklat["duration"] = data[i].duration;
-        debugger;
-            // continue your logic here...
-
 
         result = getMiklatDataFromResult(miklat);
 
