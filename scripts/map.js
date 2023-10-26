@@ -47,13 +47,39 @@ function fetchMiklats() {
     }
 }
 
-function miklatsSortedByDistance(startCoords) {
-    fetchMiklats();
+const distanceMatrixAPI = (startCoords) => new Promise((resolve) => {
+    var dests = MIKLATS.map(m => new google.maps.LatLng(m.lat, m.long))
+    var origin = new google.maps.LatLng(startCoords[0], startCoords[1])
+    var service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix(
+      {
+        origins: [origin],
+        destinations: dests,
+        travelMode: 'WALKING',
+        unitSystem: google.maps.UnitSystem.METRIC,
+      }).then(res=>resolve(res)).catch(err=>resolve(err));
+});
 
-    const sortedMiklats = MIKLATS.map(m => {
-        const dist = haversineDistance(startCoords, [m.lat, m.long]);
-        return { miklat: m, distance: Math.round(dist) };
-    }).sort((a, b) => a.distance - b.distance);
+async function miklatsSortedByDistance(startCoords) {
+    fetchMiklats();
+    var sortedMiklats;
+    let distanceMatrixResults = await distanceMatrixAPI(startCoords);
+    if(distanceMatrixResults != undefined && "rows" in distanceMatrixResults){
+        let elements = distanceMatrixResults["rows"][0]["elements"]
+        console.assert(MIKLATS.length === elements.length)
+        let arr = []
+        for(let i=0;i<elements.length;i++){
+            let obj = {miklat:MIKLATS[i], distance:elements[i].distance.value, duration:elements[i].duration.value}
+            arr.push(obj)
+        }
+        sortedMiklats = arr.sort((a, b) => a.distance - b.distance);
+    }
+    else{
+        sortedMiklats = MIKLATS.map(m => {
+            const dist = haversineDistance(startCoords, [m.lat, m.long]);
+            return {miklat: m, distance: Math.round(dist), duration:null};
+        }).sort((a, b) => a.distance - b.distance);
+    }
 
     return sortedMiklats;
 
@@ -159,6 +185,10 @@ function processResults(data) {
     for (var i = 0; i < data.length; i++) {
         const miklat = data[i].miklat;
         miklat["distance"] = data[i].distance;
+        miklat["duration"] = data[i].duration;
+        debugger;
+            // continue your logic here...
+
 
         result = getMiklatDataFromResult(miklat);
 
@@ -211,8 +241,7 @@ async function createMap(searchData = null, notFromUser = false) {
     // If you need the user's location and do not have it, do not bother doing anything more
     if (!notFromUser && !locationIsKnown(currentLocation))
         return;
-
-    const sortedMiklats = miklatsSortedByDistance(currentLocation); // Get miklats sorted by closest distance to location requested
+    const sortedMiklats = await miklatsSortedByDistance(currentLocation); // Get miklats sorted by closest distance to location requested
     const processedMiklats = processResults(sortedMiklats);
 
     // Prevent map creation if location requested is outside your city area
