@@ -18,7 +18,7 @@
         const langsAvailable = ["en",  "he"];
         const userLang = navigator.language || navigator.userLanguage;
         const nnDefined = userLang !== undefined && userLang !== null; // Protect against errors
-        const lang = (nnDefined && langsAvailable.includes(userLang.split("-")[0])) ? userLang.split("-")[0] : "en";
+        const lang = (nnDefined && langsAvailable.includes(userLang.split("-")[0])) ? userLang.split(/-|_/)[0] : "en";
 
         // Set locale+direction if it doesn't yet exist
         const direction = {en: "ltr", he: "rtl"};
