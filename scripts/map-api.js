@@ -111,8 +111,53 @@ function getAutocompletePlaceLatLng(autocompleteObj) {
     return [lat, lng];
 }
 
-// Etc API functions
+/*
+ * Etc API functions
+ */
 function createLatitudeLongitudeObject(lat, lng) {
     return new google.maps.LatLng(lat, lng)
 }
+
+// Use Google Maps Distance API to sort miklats based on walking time
+async function sortMiklatsByWalkingTime(startCoords) {
+    var sortedMiklats;
+    let distanceMatrixResults = await distanceMatrixAPI(startCoords);
+
+    if (distanceMatrixResults !== undefined && "rows" in distanceMatrixResults) {
+        let elements = distanceMatrixResults["rows"][0]["elements"];
+
+        // Do not proceed if there is something screwy with the results
+        if (MIKLATS.length !== elements.length) {
+            console.error("Array length of distance matrix API results not equal to list of miklats sent!");
+            return {succeeded: false, sorted_results: null};
+        }
+
+        let arr = [];
+        for (let i = 0; i < elements.length; i++) {
+            let obj = {
+                miklat: MIKLATS[i],
+                distance: elements[i].distance.value,
+                duration: Math.ceil(elements[i].duration.value/10)*10 // Round up to nearest ten seconds, to err on the side of caution
+            };
+            arr.push(obj);
+        }
+
+        return {succeeded: true, sorted_results: arr.sort((a, b) => a.distance - b.distance)};
+    } else
+        return {succeeded: false, sorted_results: null};
+}
+
+// Calculates walking distance from a given set of coordinates
+const distanceMatrixAPI = (startCoords) => new Promise((resolve) => {
+    var origin = createLatitudeLongitudeObject(startCoords[0], startCoords[1]);
+    var dests = MIKLATS.map(m => createLatitudeLongitudeObject(m.lat, m.long));
+    var service = new google.maps.DistanceMatrixService();
+
+    service.getDistanceMatrix({
+        origins: [origin],
+        destinations: dests,
+        travelMode: 'WALKING',
+        unitSystem: google.maps.UnitSystem.METRIC,
+    }).then(res => resolve(res)).catch(err => resolve(err));
+});
 
